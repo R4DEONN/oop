@@ -16,11 +16,15 @@ std::optional<Args> ParseArgs(int argc, char** argv)
 {
 	if (argc != 5)
 	{
+		std::cout
+			<< "Invalid argument count" << std::endl
+			<< "Usage: Replace.exe <input file> <output file> <search string> <replace string>" << std::endl;
 		return std::nullopt;
 	}
 
 	if (argv[1] == argv[2])
 	{
+		std::cout << "Input and output files must be different" << std::endl;
 		return std::nullopt;
 	}
 
@@ -46,18 +50,17 @@ std::string ReplaceString(
 	size_t pos = 0;
 	std::string result;
 
-	while (pos < subject.length())
+	while (pos != std::string::npos)
 	{
 		size_t foundPos = subject.find(searchString, pos);
+		result.append(subject, pos, foundPos - pos);
 		if (foundPos == std::string::npos)
 		{
-			result.append(subject, pos, subject.length() - pos);
 			break;
 		}
 		else
 		{
-			result.append(subject, pos, foundPos - pos);
-			result.append(replacementString);
+			result += replacementString;
 			pos = foundPos + searchString.length();
 		}
 	}
@@ -68,25 +71,38 @@ void CopyFileWithReplacement(
 	const std::string& inputFileName,
 	const std::string& outputFileName,
 	const std::string& searchString,
-	const std::string& replaceString)
+	const std::string& replacementString)
 {
 	std::ifstream input(inputFileName);
 	if (!input.is_open())
 	{
 		const std::string exceptionMessage = "Failed to open '" + inputFileName + "' for reading";
-		throw std::logic_error(exceptionMessage);
+		throw std::ifstream::failure(exceptionMessage);
 	}
 
 	std::ofstream output(outputFileName);
 	if (!output.is_open())
 	{
 		const std::string exceptionMessage = "Failed to open '" + outputFileName + "' for writing";
-		throw std::logic_error(exceptionMessage);
+		throw std::ofstream::failure(exceptionMessage);
 	}
 
-	for (std::string line; std::getline(input, line);)
+	std::string line;
+	while (std::getline(input, line))
 	{
-		output << ReplaceString(line, searchString, replaceString) << "\n";
+		if (output)
+		{
+			output << ReplaceString(line, searchString, replacementString) << std::endl;
+		}
+		else
+		{
+			throw std::ofstream::failure("Failed to writing in " + outputFileName);
+		}
+	}
+	
+	if (!input.good())
+	{
+		throw std::ifstream::failure("Failed to reading " + inputFileName);
 	}
 }
 
@@ -96,9 +112,6 @@ int main(int argc, char** argv)
 	auto args = ParseArgs(argc, argv);
 	if (!args)
 	{
-		std::cout << "Invalid argument\n";
-		std::cout << "Usage: Replace.exe <input file> <output file> <search string> <replace string>\n";
-		std::cout << "Input and output files must be different\n";
 		return EXIT_SUCCESS;
 	}
 
@@ -112,7 +125,8 @@ int main(int argc, char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		throw;
+		std::cout << e.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 
 	return EXIT_SUCCESS;
