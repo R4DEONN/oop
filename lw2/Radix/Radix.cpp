@@ -2,38 +2,19 @@
 #include <optional>
 #include <string>
 
+const int CHAR_OFFSET = 10;
+
 struct Args
 {
-	std::string sourceNotation;
-	std::string destinationNotation;
+	int sourceNotation;
+	int destinationNotation;
 	std::string value;
 };
 
-std::optional<Args> ParseArgs(int argc, char** argv)
-{
-	if (argc != 4)
-	{
-		std::cout
-			<< "Invalid argument count" << std::endl
-			<< "Usage: Radix.exe <source notation> <destination notation> <value>" << std::endl;
-		return std::nullopt;
-	}
-
-	Args args;
-	args.sourceNotation = argv[1];
-	args.destinationNotation = argv[2];
-	args.value = argv[3];
-
-	return args;
-}
-
 int CharToInt(char ch)
 {
-	int number = static_cast<int>(ch) - 48;
-	if (number > 9)
-	{
-		number -= 7;
-	}
+	int charByte = static_cast<int>(ch);
+	int number = charByte >= 'A' ? charByte -= 'A' - CHAR_OFFSET : charByte -= '0';
 
 	const int MIN_NUMBER = 0;
 	const int MAX_NUMBER = 35;
@@ -47,7 +28,7 @@ int CharToInt(char ch)
 	return number;
 }
 
-int StringToInt(const std::string& str, int radix, bool& wasError)
+int StringToInt(const std::string& str, int radix)
 {
 	int accumulator = 0;
 
@@ -57,50 +38,59 @@ int StringToInt(const std::string& str, int radix, bool& wasError)
 		isNegative = true;
 	}
 
-	try
+	const int MAX_RADIX = 36;
+	const int MIN_RADIX = 2;
+	if (radix < MIN_RADIX || radix > MAX_RADIX)
 	{
-		if (radix < 2 || radix > 36)
-		{
-			throw std::invalid_argument("Wrong notation: " + radix);
-		}
-
-		for (int i = isNegative; i < str.length(); i++)
-		{
-			auto ch = str[i];
-			int unit = CharToInt(ch);
-			if ((!isNegative && INT_MAX - unit >= accumulator * radix)
-				|| (isNegative && INT_MIN + unit <= accumulator * radix))
-			{
-				accumulator *= radix;
-				accumulator = isNegative ? accumulator - unit : accumulator + unit;
-			}
-			else
-			{
-				throw std::logic_error("There was an overflow during the translate");
-			}
-		}
+		throw std::invalid_argument("Wrong notation: " + radix);
 	}
-	catch (const std::exception& e)
+
+	for (int i = isNegative; i < str.length(); i++)
 	{
-		std::cout << e.what() << std::endl;
-		wasError = true;
+		auto ch = str[i];
+		int unit = CharToInt(ch);
+		if ((!isNegative && (INT_MAX - unit) / radix >= accumulator)
+			|| (isNegative && (INT_MIN + unit) / radix <= accumulator))
+		{
+			accumulator *= radix;
+			accumulator = isNegative ? accumulator - unit : accumulator + unit;
+		}
+		else
+		{
+			throw std::overflow_error("There was an overflow during the translate");
+		}
 	}
 
 	return accumulator;
 }
 
+std::optional<Args> ParseArgs(int argc, char** argv)
+{
+	if (argc != 4)
+	{
+		std::cout
+			<< "Invalid argument count" << std::endl
+			<< "Usage: Radix.exe <source notation> <destination notation> <value>" << std::endl;
+		return std::nullopt;
+	}
+
+	Args args;
+	args.sourceNotation = StringToInt(argv[1], 10);
+	args.destinationNotation = StringToInt(argv[2], 10);
+	args.value = argv[3];
+
+	return args;
+}
+
 char UnitToChar(int unit)
 {
-	if (unit > 9)
-	{
-		unit += 7;
-	}
-	char ch = static_cast<char>(unit + 48);
+	unit > 9 ? unit += 'A' - CHAR_OFFSET : unit += '0';
+	char ch = static_cast<char>(unit);
 
 	return ch;
 }
 
-std::string IntToString(int number, int radix, bool& wasError)
+std::string IntToString(int number, int radix)
 {
 	if (number == 0)
 	{
@@ -128,21 +118,13 @@ std::string IntToString(int number, int radix, bool& wasError)
 	return isNegative ? "-" + result : result;
 }
 
-std::string TranslateSourceNotationToDestinationNotation(
-	const std::string& sourceNotation,
-	const std::string& destinationNotation,
+std::string ConvertNotation(
+	int sourceRadix,
+	int destinationRadix,
 	const std::string& value)
 {
-	bool wasError = false;
-	int sourceRadix = StringToInt(sourceNotation, 10, wasError);
-	int destinationRadix = StringToInt(destinationNotation, 10, wasError);
-	int integerValue = StringToInt(value, sourceRadix, wasError);
-	std::string valueInDestinationNotation = IntToString(integerValue, destinationRadix, wasError);
-
-	if (wasError)
-	{
-		throw std::logic_error("Error during translate process");
-	}
+	int integerValue = StringToInt(value, sourceRadix);
+	std::string valueInDestinationNotation = IntToString(integerValue, destinationRadix);
 
 	return valueInDestinationNotation;
 }
@@ -157,7 +139,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		auto destinationNotationValue = TranslateSourceNotationToDestinationNotation(
+		auto destinationNotationValue = ConvertNotation(
 			args->sourceNotation,
 			args->destinationNotation,
 			args->value);

@@ -105,14 +105,14 @@ namespace InvertTest
 			Assert::IsTrue(actual == expected);
 		}
 
-		TEST_METHOD(GetAlgebraicAdditionsMatrix1)
+		TEST_METHOD(GetCofactorsMatrix1)
 		{
 			matrix matr = {{
 				{ 2, 5, 7 },
 				{ 6, 3, 4 },
 				{ 5, -2, -3 },
 			}};
-			auto actual = GetAlgebraicAdditionsMatrix(matr);
+			auto actual = GetCofactorsMatrix(matr);
 
 			matrix expected = {{
 				{ -1, 38, -27 },

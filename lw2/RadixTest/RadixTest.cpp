@@ -35,148 +35,128 @@ namespace RadixTest
 
 		TEST_METHOD(String10ToInt)
 		{
-			auto wasError = false;
 			auto radix = 10;
 			std::string str = "10";
-			int result = StringToInt(str, radix, wasError);
+			int result = StringToInt(str, radix);
 			int expected = 10;
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, result);
 		}
 
 		TEST_METHOD(StringWithUnknownCharacterToInt)
 		{
-			auto wasError = false;
-			auto radix = 10;
-			std::string str = "1Ü";
-			int result = StringToInt(str, radix, wasError);
-
-			Assert::IsTrue(wasError);
+			Assert::ExpectException<std::invalid_argument>([]() {
+				auto wasError = false;
+				auto radix = 10;
+				std::string str = "1Ü";
+				int result = StringToInt(str, radix);
+			});
 		}
 
 		TEST_METHOD(NegativeStringToInt)
 		{
-			auto wasError = false;
 			auto radix = 10;
 			std::string str = "-10";
-			int result = StringToInt(str, radix, wasError);
+			int result = StringToInt(str, radix);
 			int expected = -10;
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, result);
 		}
 
 		TEST_METHOD(StringIn2RadixToInt)
 		{
-			auto wasError = false;
 			auto radix = 2;
 			std::string str = "1010";
-			int result = StringToInt(str, radix, wasError);
+			int result = StringToInt(str, radix);
 			int expected = 10;
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, result);
 		}
 
 		TEST_METHOD(StringIn35RadixToInt)
 		{
-			auto wasError = false;
 			auto radix = 36;
 			std::string str = "1Z";
-			int result = StringToInt(str, radix, wasError);
+			int result = StringToInt(str, radix);
 			int expected = 71;
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, result);
 		}
 
 		TEST_METHOD(IntMaxStringRadixToInt)
 		{
-			auto wasError = false;
 			auto radix = 10;
 			std::string str = "2147483647";
-			int result = StringToInt(str, radix, wasError);
+			int result = StringToInt(str, radix);
 			int expected = INT_MAX;
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, result);
 		}
 
 		TEST_METHOD(IntMinStringRadixToInt)
 		{
-			auto wasError = false;
 			auto radix = 10;
 			std::string str = "-2147483648";
-			int result = StringToInt(str, radix, wasError);
+			int result = StringToInt(str, radix);
 			int expected = INT_MIN;
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, result);
 		}
 
 		TEST_METHOD(NegativeOverflowStringRadixToInt)
 		{
-			auto wasError = false;
-			auto radix = 10;
-			std::string str = "-2147483649";
-			int result = StringToInt(str, radix, wasError);
-
-			Assert::IsTrue(wasError);
+			Assert::ExpectException<std::overflow_error>([]() {
+				auto radix = 10;
+				std::string str = "-2147483649";
+				int result = StringToInt(str, radix);
+			});
 		}
 
 		TEST_METHOD(PositiveOverflowStringRadixToInt)
 		{
-			auto wasError = false;
-			auto radix = 10;
-			std::string str = "2147483648";
-			int result = StringToInt(str, radix, wasError);
-
-			Assert::IsTrue(wasError);
+			Assert::ExpectException<std::overflow_error>([]() {
+				auto radix = 10;
+				std::string str = "2147483648";
+				int result = StringToInt(str, radix);
+			});
 		}
 
 		TEST_METHOD(Int10ToString)
 		{
-			auto wasError = false;
 			auto radix = 10;
 			int number = 10;
-			std::string actual = IntToString(number, radix, wasError);
+			std::string actual = IntToString(number, radix);
 			std::string expected = "10";
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, actual);
 		}
 
 		TEST_METHOD(NegativeInt10ToString)
 		{
-			auto wasError = false;
 			auto radix = 10;
 			int number = -10;
-			std::string actual = IntToString(number, radix, wasError);
+			std::string actual = IntToString(number, radix);
 			std::string expected = "-10";
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, actual);
 		}
 
 		TEST_METHOD(Radix36IntToString)
 		{
-			auto wasError = false;
 			auto radix = 36;
 			int number = 71;
-			std::string actual = IntToString(number, radix, wasError);
+			std::string actual = IntToString(number, radix);
 			std::string expected = "1Z";
 
-			Assert::IsFalse(wasError);
 			Assert::AreEqual(expected, actual);
 		}
 
 		TEST_METHOD(TranslateSourceToDestination)
 		{
-			std::string sourceNotation = "16";
-			std::string destinationNotation = "10";
+			int sourceNotation = 16;
+			int destinationNotation = 10;
 			std::string value = "1F";
-			std::string actual = TranslateSourceNotationToDestinationNotation(
+			std::string actual = ConvertNotation(
 				sourceNotation,
 				destinationNotation,
 				value
@@ -188,8 +168,8 @@ namespace RadixTest
 
 		TEST_METHOD(TranslateSourceToDestinationUnknownCharacter)
 		{
-			std::string sourceNotation = "16";
-			std::string destinationNotation = "10";
+			int sourceNotation = 16;
+			int destinationNotation = 10;
 			std::string value = "1Ü";
 
 			Assert::ExpectException<std::logic_error>([
@@ -197,7 +177,7 @@ namespace RadixTest
 				destinationNotation,
 				value
 			]() {
-				TranslateSourceNotationToDestinationNotation(
+				ConvertNotation(
 					sourceNotation,
 					destinationNotation,
 					value
@@ -207,10 +187,10 @@ namespace RadixTest
 
 		TEST_METHOD(TranslateSourceToDestinationINTMAX)
 		{
-			std::string sourceNotation = "10";
-			std::string destinationNotation = "36";
+			int sourceNotation = 10;
+			int destinationNotation = 36;
 			std::string value = "2147483647";
-			std::string actual = TranslateSourceNotationToDestinationNotation(
+			std::string actual = ConvertNotation(
 				sourceNotation,
 				destinationNotation,
 				value);
@@ -221,10 +201,10 @@ namespace RadixTest
 
 		TEST_METHOD(TranslateSourceToDestinationINTMIN)
 		{
-			std::string sourceNotation = "10";
-			std::string destinationNotation = "2";
+			int sourceNotation = 10;
+			int destinationNotation = 2;
 			std::string value = "-2147483648";
-			std::string actual = TranslateSourceNotationToDestinationNotation(
+			std::string actual = ConvertNotation(
 				sourceNotation,
 				destinationNotation,
 				value);
@@ -235,16 +215,16 @@ namespace RadixTest
 
 		TEST_METHOD(TranslateSourceToDestinationOverflow)
 		{
-			std::string sourceNotation = "10";
-			std::string destinationNotation = "2";
+			int sourceNotation = 10;
+			int destinationNotation = 2;
 			std::string value = "-2147483649000000";
 
-			Assert::ExpectException<std::logic_error>([
+			Assert::ExpectException<std::overflow_error>([
 				sourceNotation,
 				destinationNotation,
 				value
 			]() {
-				TranslateSourceNotationToDestinationNotation(sourceNotation, destinationNotation, value);
+				ConvertNotation(sourceNotation, destinationNotation, value);
 			});
 		}
 	};

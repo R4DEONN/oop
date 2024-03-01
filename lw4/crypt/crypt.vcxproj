@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{89e41984-766f-4186-8471-e9d370632f25}</ProjectGuid>
-    <RootNamespace>lw3</RootNamespace>
+    <ProjectGuid>{03876bc7-009c-4860-a48d-61f80c0b606a}</ProjectGuid>
+    <RootNamespace>crypt</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Invert</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -130,10 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="invert.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="matrix.txt" />
+    <ClCompile Include="crypt.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
