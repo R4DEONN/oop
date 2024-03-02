@@ -7,8 +7,11 @@
 
 const constexpr int MATRIX_DIM = 3;
 
-using matrixLine = std::array<double, MATRIX_DIM>;
-using matrix = std::array<matrixLine, MATRIX_DIM>;
+using matrixLine3 = std::array<double, MATRIX_DIM>;
+using matrix3x3 = std::array<matrixLine3, MATRIX_DIM>;
+
+using matrixLine2 = std::array<double, 2>;
+using matrix2x2 = std::array<matrixLine3, 2>;
 
 struct Args
 {
@@ -28,15 +31,15 @@ std::optional<Args> ParseArgs(int argc, char** argv)
 	return Args{ argv[1] };
 }
 
-matrix GetMatrixFromStream(std::istream& input)
+matrix3x3 GetMatrixFromStream(std::istream& input)
 {
-	matrix matrixFromStream;
+	matrix3x3 matrixFromStream;
 	int i = 0;
 	std::string line;
 	while (std::getline(input, line))
 	{
 		std::stringstream strstream(line);
-		matrixLine matrixLine;
+		matrixLine3 matrixLine;
 		for (int j = 0; j < MATRIX_DIM; j++)
 		{
 			strstream >> matrixLine[j];
@@ -62,7 +65,7 @@ matrix GetMatrixFromStream(std::istream& input)
 	return matrixFromStream;
 }
 
-matrix GetMatrixFromFile(const std::string& inputFileName)
+matrix3x3 GetMatrixFromFile(const std::string& inputFileName)
 {
 	std::ifstream input(inputFileName);
 	if (!input.is_open())
@@ -73,19 +76,19 @@ matrix GetMatrixFromFile(const std::string& inputFileName)
 	return GetMatrixFromStream(input);
 }
 
-double GetMatrixDeterminant(const matrix& matr)
+double GetMatrixDeterminant(const matrix3x3& matr)
 {
 	return matr[0][0] * matr[1][1] * matr[2][2] - matr[0][0] * matr[1][2] * matr[2][1]
 		- matr[0][1] * matr[1][0] * matr[2][2] + matr[0][1] * matr[1][2] * matr[2][0]
 		+ matr[0][2] * matr[1][0] * matr[2][1] - matr[0][2] * matr[1][1] * matr[2][0];
 }
 
-double GetMatrixDeterminant(const std::array<std::array<double, 2>, 2>& matr)
+double GetMatrixDeterminant(const matrix2x2& matr)
 {
 	return matr[0][0] * matr[1][1] - matr[0][1] * matr[1][0];
 }
 
-matrix GetTransposedMatrix(matrix matr)
+matrix3x3 GetTransposedMatrix(matrix3x3 matr)
 {
 	double tmp;
 	for (int i = 0; i < MATRIX_DIM; ++i)
@@ -101,9 +104,9 @@ matrix GetTransposedMatrix(matrix matr)
 	return matr;
 }
 
-double GetMinor(const matrix& matr, int line, int column)
+double GetMinor(const matrix3x3& matr, int line, int column)
 {
-	std::array<std::array<double, 2>, 2> newMatr;
+	matrix2x2 newMatr;
 
     int newRow = 0;
 	for (int i = 0; i < MATRIX_DIM; ++i)
@@ -129,9 +132,9 @@ double GetMinor(const matrix& matr, int line, int column)
 	return GetMatrixDeterminant(newMatr);
 }
 
-matrix GetCofactorsMatrix(const matrix& matr)
+matrix3x3 GetCofactorsMatrix(const matrix3x3& matr)
 {
-	matrix cofactorsMatrix;
+	matrix3x3 cofactorsMatrix;
 	for (int i = 0; i < MATRIX_DIM; i++)
 	{
 		for (int j = 0; j < MATRIX_DIM; j++)
@@ -148,7 +151,7 @@ matrix GetCofactorsMatrix(const matrix& matr)
 	return cofactorsMatrix;
 }
 
-void ScaleMatrix(matrix& matr, float scale)
+void ScaleMatrix(matrix3x3& matr, double scale)
 {
 	for (auto& matrixLine : matr)
 	{
@@ -159,7 +162,7 @@ void ScaleMatrix(matrix& matr, float scale)
 	}
 }
 
-std::optional<matrix> InvertMatrix(const matrix& originalMatrix)
+std::optional<matrix3x3> InvertMatrix(const matrix3x3& originalMatrix)
 {
 	auto determinant = GetMatrixDeterminant(originalMatrix);
 
@@ -178,7 +181,7 @@ std::optional<matrix> InvertMatrix(const matrix& originalMatrix)
 	return transposedMatrix;
 }
 
-void PrintMatrix(const matrix& matr)
+void PrintMatrix(const matrix3x3& matr)
 {
 	std::cout.precision(2);
 	for (auto& matrixLine : matr)
@@ -202,7 +205,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		matrix originalMatrix = GetMatrixFromFile(args->inputFileName);
+		matrix3x3 originalMatrix = GetMatrixFromFile(args->inputFileName);
 		auto inverseMatrix = InvertMatrix(originalMatrix);
 		if (!inverseMatrix)
 		{

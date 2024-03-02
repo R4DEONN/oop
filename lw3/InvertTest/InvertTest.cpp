@@ -15,7 +15,7 @@ namespace InvertTest
 			
 			auto actual = GetMatrixFromStream(input);
 
-			matrix expected = {{
+			matrix3x3 expected = {{
 				{3, 4, 8},
 				{2.4, -1, 11},
 				{7, -3.2, 0},
@@ -34,7 +34,7 @@ namespace InvertTest
 
 		TEST_METHOD(GetMatrixDeterminant3x3)
 		{
-			matrix matr = {{
+			matrix3x3 matr = {{
 				{1, -2, 3},
 				{4, 0, 6},
 				{-7, 8, 9},
@@ -61,7 +61,7 @@ namespace InvertTest
 
 		TEST_METHOD(GetMinor1)
 		{
-			matrix matr = { {
+			matrix3x3 matr = { {
 				{ 2, 5, 7 },
 				{ 6, 3, 4 },
 				{ 5, -2, -3 },
@@ -75,7 +75,7 @@ namespace InvertTest
 
 		TEST_METHOD(GetMinor2)
 		{
-			matrix matr = { {
+			matrix3x3 matr = { {
 				{ 2, 5, 7 },
 				{ 6, 3, 4 },
 				{ 5, -2, -3 },
@@ -89,14 +89,14 @@ namespace InvertTest
 		
 		TEST_METHOD(GetTransposedMatrix1)
 		{
-			matrix matr = {{
+			matrix3x3 matr = {{
 				{ 1, -2, 3 },
 				{ 4, 0, 6 },
 				{ -7, 8, 9 },
 			}};
 			auto actual = GetTransposedMatrix(matr);
 
-			matrix expected = {{
+			matrix3x3 expected = {{
 				{ 1, 4, -7 },
 				{ -2, 0, 8 },
 				{ 3, 6, 9 },
@@ -107,14 +107,14 @@ namespace InvertTest
 
 		TEST_METHOD(GetCofactorsMatrix1)
 		{
-			matrix matr = {{
+			matrix3x3 matr = {{
 				{ 2, 5, 7 },
 				{ 6, 3, 4 },
 				{ 5, -2, -3 },
 			}};
 			auto actual = GetCofactorsMatrix(matr);
 
-			matrix expected = {{
+			matrix3x3 expected = {{
 				{ -1, 38, -27 },
 				{ 1, -41, 29 },
 				{ -1, 34, -24 },
@@ -126,7 +126,7 @@ namespace InvertTest
 		TEST_METHOD(InvertWithDeterminantEqualTo0)
 		{
 			Assert::ExpectException<std::logic_error>([]() {
-				matrix matr = { {
+				matrix3x3 matr = { {
 					{ 1, 1, 1 },
 					{ 1, 1, 1 },
 					{ 1, 1, 1 },
@@ -137,14 +137,14 @@ namespace InvertTest
 
 		TEST_METHOD(Invert)
 		{
-			matrix matr = { {
+			matrix3x3 matr = { {
 				{ 2, 5, 7 },
 				{ 6, 3, 4 },
 				{ 5, -2, -3 },
 			} };
 			auto actual = InvertMatrix(matr);
 
-			matrix expected = { {
+			matrix3x3 expected = { {
 				{ 1, -1, 1 },
 				{ -38, 41, -34 },
 				{ 27, -29, 24 },

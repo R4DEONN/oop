@@ -4,15 +4,39 @@
 #include <fstream>
 #include <vector>
 #include <queue>
+#include <stack>
+#include <boost/timer.hpp>
 
 enum struct CellType
 {
-	Null = 0,
-	Border,
-	StartPoint,
+	Null = ' ',
+	Border = '#',
+	StartPoint = 'O',
+	FillPoint = '.',
 };
 
-using matrixLine = std::vector<int>;
+
+struct Cell
+{
+	CellType type;
+
+	Cell(char c)
+		: type(static_cast<CellType>(c))
+	{
+	}
+
+	Cell(CellType type)
+		: type(type)
+	{
+	}
+
+	operator char() const
+	{
+		return static_cast<char>(type);
+	}
+};
+
+using matrixLine = std::vector<Cell>;
 using matrix = std::vector<matrixLine>;
 
 struct Point
@@ -54,17 +78,16 @@ void FillMatrixWithSpace(matrix& matr, int lineLength)
 {
 	for (auto& matrixRow : matr)
 	{
-		matrixRow.resize(lineLength, 0);
+		matrixRow.resize(lineLength, Cell{ CellType::Null });
 	}
 }
 
 ParseData ParseFile(std::istream& input)
 {
 	std::vector<Point> startPoints;
-
-	constexpr const int fillSize = 100;
 	matrix matr;
 	std::string line;
+	constexpr const int fillSize = 100;
 	int maxLineLength = 0;
 
 	for (int i = 0; std::getline(input, line) && i < fillSize; i++)
@@ -80,14 +103,14 @@ ParseData ParseFile(std::istream& input)
 			switch (line[j])
 			{
 			case ' ':
-				matrLine.push_back(static_cast<int>(CellType::Null));
+				matrLine.push_back(Cell{ CellType::Null });
 				continue;
 			case 'O':
-				matrLine.push_back(static_cast<int>(CellType::StartPoint));
+				matrLine.push_back(Cell{ CellType::StartPoint });
 				startPoints.emplace_back(j, i);
 				continue;
 			case '#':
-				matrLine.push_back(static_cast<int>(CellType::Border));
+				matrLine.push_back(Cell{ CellType::Border });
 			}
 		}
 
@@ -96,16 +119,32 @@ ParseData ParseFile(std::istream& input)
 
 	FillMatrixWithSpace(matr, maxLineLength);
 
-	if (!input.eof())
-	{
-		throw std::ifstream::failure("Failed to reading input file");
-	}
-
 	return {matr, startPoints};
+}
+
+void FillAdjacentCell(matrix& matr, int x, int y, std::queue<Point>& queue)
+{
+	int dx[] = { 0, -1, 0, 1 };
+	int dy[] = { -1, 0, 1, 0 };
+
+	for (int i = 0; i < 4; ++i)
+	{
+		int newX = x + dx[i];
+		int newY = y + dy[i];
+
+		if (newX >= 0 && newY >= 0
+			&& newY < matr.size() && newX < matr[newY].size()
+			&& matr[newY][newX] == Cell{ CellType::Null }
+		) {
+			queue.emplace(newX, newY);
+			matr[newY][newX] = Cell{ CellType::FillPoint };
+		}
+	}
 }
 
 void FillMatrix(matrix& matr, const std::vector<Point> startPoints)
 {
+	//TODO вы€снить, что быстрее очередь или стек: ќчередь дл€ 100x100 стек за 0.008, очередб за 0.005
 	std::queue<Point> queue;
 	for (auto [x, y] : startPoints)
 	{
@@ -117,33 +156,11 @@ void FillMatrix(matrix& matr, const std::vector<Point> startPoints)
 		auto [x, y] = queue.front();
 		queue.pop();
 
-		if (y - 1 >= 0 && matr[y - 1][x] == 0)
-		{
-			queue.emplace(x, y - 1);
-			matr[y - 1][x] = 3;
-		}
-
-		if (x - 1 >= 0 && matr[y][x - 1] == 0)
-		{
-			queue.emplace(x - 1, y);
-			matr[y][x - 1] = 3;
-		}
-
-		if (y + 1 < matr.size() && matr[y + 1][x] == 0)
-		{
-			queue.emplace(x, y + 1);
-			matr[y + 1][x] = 3;
-		}
-
-		if (x + 1 < matr[y].size() && matr[y][x + 1] == 0)
-		{
-			queue.emplace(x + 1, y);
-			matr[y][x + 1] = 3;
-		}
+		FillAdjacentCell(matr, x, y, queue);
 	}
 }
 
-void CopyFileWithFill(const std::string& inputFileName, const std::string& outputFileName)
+void FillFileToFile(const std::string& inputFileName, const std::string& outputFileName)
 {
 	std::ifstream input(inputFileName);
 	if (!input.is_open())
@@ -164,20 +181,7 @@ void CopyFileWithFill(const std::string& inputFileName, const std::string& outpu
 	{
 		for (auto element : line)
 		{
-			switch (element)
-			{
-			case 0:
-				output << ' ';
-				continue;
-			case 1:
-				output << '#';
-				continue;
-			case 2:
-				output << 'O';
-				continue;
-			case 3:
-				output << '.';
-			}
+			output << element;
 		}
 		output << std::endl;
 	}
@@ -193,7 +197,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		CopyFileWithFill(args->inputFileName, args->outputFileName);
+		FillFileToFile(args->inputFileName, args->outputFileName);
 	}
 	catch (const std::exception& e)
 	{
