@@ -22,7 +22,6 @@ std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 
 std::string Calculator::GetValue(const std::string& name)
 {
-	//TODO: remove duplicate
 	auto variable = FindOperand(name);
 	if (variable == nullptr)
 	{
@@ -43,6 +42,7 @@ std::string Calculator::GetValue(const std::string& name)
 
 void Calculator::AssignValueToVar(const std::string& name, double value)
 {
+	//TODO: remove duplicate
 	auto variable = FindVariable(name);
 	if (variable == nullptr)
 	{

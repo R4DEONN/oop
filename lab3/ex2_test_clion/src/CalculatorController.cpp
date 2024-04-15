@@ -62,33 +62,26 @@ void CalculatorController::Let(std::istream& args)
 {
 	try
 	{
-		std::string equalCh;
-		std::string name;
-		std::string value;
-		args >> name >> equalCh >> value;
-		if (name.empty())
+		std::istreambuf_iterator<char> eos;
+		std::string argsStr(std::istreambuf_iterator<char>(args), eos);
+		std::regex pattern(R"(\s*(\w+)\s*=\s*(\w+))");
+		std::smatch matches;
+
+		if (!std::regex_match(argsStr, matches, pattern))
 		{
-			throw std::invalid_argument("Syntax Error: variable for assignment is not specified");
-		}
-		if (equalCh != "=")
-		{
-			throw std::invalid_argument("Syntax Error: letting variable without assignment sign");
-		}
-		if (value.empty())
-		{
-			throw std::invalid_argument("Syntax Error: new value of the variable is not specified");
+			throw SyntaxException("incorrect letting variable");
 		}
 
-		std::istringstream valuestream(value);
+		std::istringstream valuestream(matches[2]);
 		double num;
 
 		if (valuestream >> num)
 		{
-			m_calculator.AssignValueToVar(name, num);
+			m_calculator.AssignValueToVar(matches[1], num);
 		}
 		else
 		{
-			m_calculator.AssignValueToVar(name, value);
+			m_calculator.AssignValueToVar(matches[1], matches[2]);
 		}
 	}
 	catch (const std::exception& e)

@@ -8,7 +8,6 @@ Function::Function(const std::shared_ptr<Variable>& valueProvider)
 	  m_operation(Operation::None),
 	  m_rightOperand(valueProvider)
 {
-//	m_leftOperand->Subscribe(shared_from_this());
 }
 
 Function::Function(
@@ -22,8 +21,6 @@ Function::Function(
 	  m_operation(operation),
 	  m_rightOperand(rightOperand)
 {
-//	m_leftOperand->Subscribe(shared_from_this());
-//	m_rightOperand->Subscribe(shared_from_this());
 	auto result = GetOperationResult(leftOperand, operation, rightOperand);
 	if (result)
 	{
@@ -53,6 +50,8 @@ std::optional<double> Function::GetOperationResult(
 		return leftOperand->GetValue() * rightOperand->GetValue();
 	case Operation::Division:
 		return leftOperand->GetValue() / rightOperand->GetValue();
+	case Operation::None:
+		return leftOperand->GetValue();
 	default:
 		throw std::invalid_argument("Unknown operation");
 	}
