@@ -11,7 +11,7 @@ constexpr std::string Nan = "NaN";
 class Calculator
 {
 public:
-	void InitVar(const std::string& name);
+	std::shared_ptr<Variable> InitVar(const std::string& name);
 
 	void AssignValueToVar(const std::string& name, double value);
 

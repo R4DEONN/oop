@@ -2,7 +2,7 @@
 #include <sstream>
 #include "CustomExceptions.h"
 
-void Calculator::InitVar(const std::string& name)
+std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 {
 	if (name.empty())
 	{
@@ -16,10 +16,13 @@ void Calculator::InitVar(const std::string& name)
 
 	auto variable = std::make_shared<Variable>();
 	m_variables.emplace(name, variable);
+
+	return variable;
 }
 
 std::string Calculator::GetValue(const std::string& name)
 {
+	//TODO: remove duplicate
 	auto variable = FindOperand(name);
 	if (variable == nullptr)
 	{
@@ -43,7 +46,7 @@ void Calculator::AssignValueToVar(const std::string& name, double value)
 	auto variable = FindVariable(name);
 	if (variable == nullptr)
 	{
-		InitVar(name);
+		variable = InitVar(name);
 	}
 
 	variable->SetValue(value);
@@ -54,7 +57,7 @@ void Calculator::AssignValueToVar(const std::string& lname, const std::string& r
 	auto leftVar = FindVariable(lname);
 	if (leftVar == nullptr)
 	{
-		InitVar(lname);
+		leftVar = InitVar(lname);
 	}
 
 	auto rightVar = FindVariable(rname);

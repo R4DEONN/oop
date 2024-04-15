@@ -12,7 +12,7 @@ public:
 	{
 	}
 
-	const char* what() const noexcept override
+	[[nodiscard]] const char* what() const noexcept override
 	{
 		return errorMessage.c_str();
 	}
@@ -24,11 +24,11 @@ private:
 	std::string errorMessage;
 
 public:
-	UndeclaredException(std::string message) : errorMessage(std::move(message))
+	explicit UndeclaredException(std::string message) : errorMessage(std::move(message))
 	{
 	}
 
-	const char* what() const noexcept override
+	[[nodiscard]] const char* what() const noexcept override
 	{
 		return errorMessage.c_str();
 	}
@@ -40,11 +40,28 @@ private:
 	std::string errorMessage;
 
 public:
-	InvalidNameException(std::string message) : errorMessage(std::move(message))
+	explicit InvalidNameException(std::string message) : errorMessage(std::move(message))
 	{
 	}
 
-	const char* what() const noexcept override
+	[[nodiscard]] const char* what() const noexcept override
+	{
+		return errorMessage.c_str();
+	}
+};
+
+class SyntaxException : public std::exception
+{
+private:
+	std::string errorMessage;
+
+public:
+	explicit SyntaxException(const std::string& message)
+	{
+		errorMessage = "Syntax error: " + message;
+	}
+
+	[[nodiscard]] const char* what() const noexcept override
 	{
 		return errorMessage.c_str();
 	}

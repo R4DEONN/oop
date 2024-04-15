@@ -1,15 +1,22 @@
 #include <sstream>
 #include <regex>
+#include "CustomExceptions.h"
 #include "CalculatorController.h"
 
 CalculatorController::CalculatorController(Calculator& calculator, std::istream& input, std::ostream& output)
 	: m_calculator(calculator), m_input(input), m_output(output), m_actionMap({
-	{ "var",       [this](std::istream & strm) { Var(strm); } },
-	{ "let",       [this](std::istream & strm) { Let(strm); } },
-	{ "fn",        [this](std::istream & strm) { Fn(strm); } },
-	{ "print",     [this](std::istream & strm) { Print(strm); } },
-	{ "printvars", [this](std::istream & strm) { PrintVars(strm); } },
-	{ "printfns",  [this](std::istream & strm) { PrintFns(strm); } },
+	{ "var",       [this](std::istream& strm)
+				   { Var(strm); }},
+	{ "let",       [this](std::istream& strm)
+				   { Let(strm); }},
+	{ "fn",        [this](std::istream& strm)
+				   { Fn(strm); }},
+	{ "print",     [this](std::istream& strm)
+				   { Print(strm); }},
+	{ "printvars", [this](std::istream& strm)
+				   { PrintVars(strm); }},
+	{ "printfns",  [this](std::istream& strm)
+				   { PrintFns(strm); }},
 })
 {
 }
@@ -96,31 +103,29 @@ void CalculatorController::Fn(std::istream& args)
 	{
 		std::istreambuf_iterator<char> eos;
 		std::string argsStr(std::istreambuf_iterator<char>(args), eos);
-		std::regex pattern("\\s*(\\w+)\\s*=\\s*(\\w+)");
+		std::regex pattern(R"(\s*(\w+)\s*=\s*(\w+))");
 		std::smatch matches;
 
 		if (std::regex_match(argsStr, matches, pattern))
 		{
 			m_calculator.InitFn(matches[1], matches[2]);
+			return;
+		}
+
+		std::regex pattern2(R"(\s*(\w+)\s*=\s*(\w+)\s*([+*\/-])\s*(\w+))");
+
+		if (std::regex_match(argsStr, matches, pattern2))
+		{
+			m_calculator.InitFn(
+				matches[1],
+				matches[2],
+				GetOperation(matches[3]),
+				matches[4]
+			);
 		}
 		else
 		{
-			std::regex pattern2("\\s*(\\w+)\\s*=\\s*(\\w+)\\s*([+*\\/-])\\s*(\\w+)");
-
-			if (std::regex_match(argsStr, matches, pattern2))
-			{
-				m_calculator.InitFn(
-					matches[1],
-					matches[2],
-					GetOperation(matches[3]),
-					matches[4]
-				);
-			}
-			else
-			{
-				//TODO: throw
-				std::cout << "No match found." << std::endl;
-			}
+			throw SyntaxException("Incorrect syntax of function declaration");
 		}
 	}
 	catch (const std::exception& e)
