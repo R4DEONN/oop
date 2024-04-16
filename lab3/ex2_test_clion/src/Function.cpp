@@ -20,11 +20,7 @@ Function::Function(
 	  m_rightOperand(rightOperand)
 {
 	auto result = GetOperationResult(leftOperand, operation, rightOperand);
-	if (result)
-	{
-		m_isUndefined = false;
-		m_value = result.value();
-	}
+	m_value = result.value();
 }
 
 std::optional<double> Function::GetOperationResult(
@@ -33,11 +29,6 @@ std::optional<double> Function::GetOperationResult(
 	const std::shared_ptr<Variable>& rightOperand
 	)
 {
-	if (leftOperand->IsUndefined() || rightOperand->IsUndefined())
-	{
-		return std::nullopt;
-	}
-
 	switch (operation)
 	{
 	case Operation::Plus:
@@ -58,14 +49,6 @@ std::optional<double> Function::GetOperationResult(
 void Function::Update()
 {
 	auto result = GetOperationResult(m_leftOperand, m_operation, m_rightOperand);
-	if (result)
-	{
-		m_isUndefined = false;
-		m_value = result.value();
-	}
-	else
-	{
-		m_isUndefined = true;
-	}
+	m_value = result.value();
 	NotifySubscribers();
 }

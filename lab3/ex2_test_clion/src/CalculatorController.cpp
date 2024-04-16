@@ -138,14 +138,7 @@ void CalculatorController::Print(std::istream& args)
 		if (args >> name)
 		{
 			auto var = m_calculator.GetVariable(name);
-			if (var.IsUndefined())
-			{
-				m_output << Nan;
-			}
-			else
-			{
-				m_output << var.GetValue();
-			}
+			m_output << var.GetValue();
 			m_output << std::endl;
 		}
 	}
@@ -162,14 +155,7 @@ void CalculatorController::PrintVars()
 	for (auto& pair: variables)
 	{
 		m_output << pair.first << ":";
-		if (pair.second->IsUndefined())
-		{
-			m_output << Nan;
-		}
-		else
-		{
-			m_output << pair.second->GetValue();
-		}
+		m_output << pair.second->GetValue();
 		m_output << std::endl;
 	}
 }
@@ -180,14 +166,7 @@ void CalculatorController::PrintFns()
 	for (auto& pair: functions)
 	{
 		m_output << pair.first << ":";
-		if (pair.second->IsUndefined())
-		{
-			m_output << Nan;
-		}
-		else
-		{
-			m_output << pair.second->GetValue();
-		}
+		m_output << pair.second->GetValue();
 		m_output << std::endl;
 	}
 }

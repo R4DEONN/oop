@@ -1,8 +1,7 @@
 #include "Variable.h"
 
 Variable::Variable(double value)
-	: m_value(value),
-	  m_isUndefined(false)
+	: m_value(value)
 {
 }
 
@@ -11,14 +10,8 @@ double Variable::GetValue() const
 	return m_value;
 }
 
-bool Variable::IsUndefined() const
-{
-	return m_isUndefined;
-}
-
 void Variable::SetValue(double value)
 {
-	m_isUndefined = false;
 	m_value = value;
 	NotifySubscribers();
 }
