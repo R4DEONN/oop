@@ -28,14 +28,9 @@ void Variable::Subscribe(const std::shared_ptr<ISubscriber>& sub)
 	m_subscribers.insert(sub);
 }
 
-void Variable::Unsubscribe(const std::shared_ptr<ISubscriber>& sub)
-{
-	m_subscribers.erase(sub);
-}
-
 void Variable::NotifySubscribers()
 {
-	for (auto sub : m_subscribers)
+	for (const auto& sub : m_subscribers)
 	{
 		sub->Update();
 	}

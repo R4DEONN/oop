@@ -6,7 +6,6 @@
 #include "Variable.h"
 #include "Function.h"
 
-constexpr std::string Nan = "NaN";
 
 class Calculator
 {
@@ -26,7 +25,7 @@ public:
 		const std::string& rightOperandName
 	);
 
-	std::string GetValue(const std::string& name);
+	Variable GetVariable(const std::string& name);
 
 	std::map<std::string, std::shared_ptr<Variable>> GetVariables();
 

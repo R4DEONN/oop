@@ -6,6 +6,8 @@
 #include <map>
 #include "Calculator.h"
 
+constexpr std::string Nan = "NaN";
+
 class CalculatorController
 {
 public:

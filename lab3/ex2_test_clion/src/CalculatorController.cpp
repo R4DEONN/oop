@@ -49,8 +49,11 @@ void CalculatorController::Var(std::istream& args)
 	try
 	{
 		std::string name;
-		args >> name;
-		m_calculator.InitVar(name);
+		if (args >> name)
+		{
+			m_calculator.InitVar(name);
+		}
+		//TODO: throw
 	}
 	catch (const std::exception& e)
 	{
@@ -132,8 +135,19 @@ void CalculatorController::Print(std::istream& args)
 	try
 	{
 		std::string name;
-		args >> name;
-		m_output << m_calculator.GetValue(name) << std::endl;
+		if (args >> name)
+		{
+			auto var = m_calculator.GetVariable(name);
+			if (var.IsUndefined())
+			{
+				m_output << Nan;
+			}
+			else
+			{
+				m_output << var.GetValue();
+			}
+			m_output << std::endl;
+		}
 	}
 	catch (const std::exception& e)
 	{

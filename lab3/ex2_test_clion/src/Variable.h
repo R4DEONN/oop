@@ -16,7 +16,6 @@ public:
 	virtual void SetValue(double value);
 
 	void Subscribe(const std::shared_ptr<ISubscriber>& sub);
-	void Unsubscribe(const std::shared_ptr<ISubscriber>& sub);
 	void NotifySubscribers();
 
 protected:

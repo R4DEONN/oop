@@ -20,29 +20,20 @@ std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 	return variable;
 }
 
-std::string Calculator::GetValue(const std::string& name)
+Variable Calculator::GetVariable(const std::string& name)
 {
 	auto variable = FindOperand(name);
 	if (variable == nullptr)
 	{
 		throw UndeclaredException("Undeclared variable '" + name + "'");
 	}
-
-	if (variable->IsUndefined())
-	{
-		return Nan;
-	}
-
-	std::stringstream stringstream;
-	stringstream.precision(2);
-	stringstream << variable->GetValue();
-
-	return stringstream.str();
+	return *variable;
 }
 
 void Calculator::DeclareAndSetVariable(const std::string& name, double value)
 {
 	//TODO: remove duplicate
+	//TODO: throw overflow
 	auto variable = FindVariable(name);
 	if (variable == nullptr)
 	{
@@ -76,8 +67,12 @@ std::map<std::string, std::shared_ptr<Variable>> Calculator::GetVariables()
 
 void Calculator::InitFn(const std::string& lname, const std::string& rname)
 {
-	auto valueProvider = FindOperand(lname);
-	if (valueProvider != nullptr)
+	if (lname.empty())
+	{
+		throw InvalidNameException("Function must have a name");
+	}
+	auto variable = FindOperand(lname);
+	if (variable != nullptr)
 	{
 		throw RedefinitionException("Redefinition of '" + lname + "'");
 	}
@@ -95,19 +90,24 @@ void Calculator::InitFn(
 	const std::string& rightOperandName
 )
 {
+	//TODO: remove duplicate
 	if (name.empty())
 	{
 		throw InvalidNameException("Function must have a name");
 	}
-	auto it = m_functions.find(name);
-	if (it != m_functions.end())
+	auto variable = FindOperand(name);
+	if (variable != nullptr)
 	{
 		throw RedefinitionException("Redefinition of '" + name + "'");
 	}
+	if (operation == Operation::None)
+	{
+		throw std::invalid_argument("Unknown operation");
+	}
 
-	std::shared_ptr<Variable> leftOperand = GetOperand(leftOperandName);
-	std::shared_ptr<Variable> rightOperand = GetOperand(rightOperandName);
-	std::shared_ptr<Function> function = std::make_shared<Function>(leftOperand, operation, rightOperand);
+	auto leftOperand = GetOperand(leftOperandName);
+	auto rightOperand = GetOperand(rightOperandName);
+	auto function = std::make_shared<Function>(leftOperand, operation, rightOperand);
 	leftOperand->Subscribe(function);
 	rightOperand->Subscribe(function);
 	m_functions.emplace(name, function);
