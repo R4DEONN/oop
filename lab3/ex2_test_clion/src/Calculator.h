@@ -13,9 +13,9 @@ class Calculator
 public:
 	std::shared_ptr<Variable> InitVar(const std::string& name);
 
-	void AssignValueToVar(const std::string& name, double value);
+	void DeclareAndSetVariable(const std::string& name, double value);
 
-	void AssignValueToVar(const std::string& lname, const std::string& rname);
+	void DeclareAndSetVariable(const std::string& lname, const std::string& rname);
 
 	void InitFn(const std::string& lname, const std::string& rname);
 

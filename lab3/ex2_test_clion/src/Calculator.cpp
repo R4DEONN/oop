@@ -40,7 +40,7 @@ std::string Calculator::GetValue(const std::string& name)
 	return stringstream.str();
 }
 
-void Calculator::AssignValueToVar(const std::string& name, double value)
+void Calculator::DeclareAndSetVariable(const std::string& name, double value)
 {
 	//TODO: remove duplicate
 	auto variable = FindVariable(name);
@@ -52,7 +52,7 @@ void Calculator::AssignValueToVar(const std::string& name, double value)
 	variable->SetValue(value);
 }
 
-void Calculator::AssignValueToVar(const std::string& lname, const std::string& rname)
+void Calculator::DeclareAndSetVariable(const std::string& lname, const std::string& rname)
 {
 	auto leftVar = FindVariable(lname);
 	if (leftVar == nullptr)

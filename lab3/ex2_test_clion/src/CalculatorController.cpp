@@ -77,11 +77,11 @@ void CalculatorController::Let(std::istream& args)
 
 		if (valuestream >> num)
 		{
-			m_calculator.AssignValueToVar(matches[1], num);
+			m_calculator.DeclareAndSetVariable(matches[1], num);
 		}
 		else
 		{
-			m_calculator.AssignValueToVar(matches[1], matches[2]);
+			m_calculator.DeclareAndSetVariable(matches[1], matches[2]);
 		}
 	}
 	catch (const std::exception& e)
