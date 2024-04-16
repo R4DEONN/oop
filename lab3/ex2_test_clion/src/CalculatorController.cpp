@@ -14,9 +14,9 @@ CalculatorController::CalculatorController(Calculator& calculator, std::istream&
 	{ "print",     [this](std::istream& strm)
 				   { Print(strm); }},
 	{ "printvars", [this](std::istream& strm)
-				   { PrintVars(strm); }},
+				   { PrintVars(); }},
 	{ "printfns",  [this](std::istream& strm)
-				   { PrintFns(strm); }},
+				   { PrintFns(); }},
 })
 {
 }
@@ -64,7 +64,7 @@ void CalculatorController::Let(std::istream& args)
 	{
 		std::istreambuf_iterator<char> eos;
 		std::string argsStr(std::istreambuf_iterator<char>(args), eos);
-		std::regex pattern(R"(\s*(\w+)\s*=\s*(\w+))");
+		std::regex pattern(R"(\s*(\w+)\s*=\s*(\d+.?\d+|\w+))");
 		std::smatch matches;
 
 		if (!std::regex_match(argsStr, matches, pattern))
@@ -141,7 +141,7 @@ void CalculatorController::Print(std::istream& args)
 	}
 }
 
-void CalculatorController::PrintVars(std::istream& args)
+void CalculatorController::PrintVars()
 {
 	//TODO: remove dublicate
 	auto variables = m_calculator.GetVariables();
@@ -160,7 +160,7 @@ void CalculatorController::PrintVars(std::istream& args)
 	}
 }
 
-void CalculatorController::PrintFns(std::istream& args)
+void CalculatorController::PrintFns()
 {
 	auto functions = m_calculator.GetFunctions();
 	for (auto& pair: functions)

@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Calculator.h"
-#include "CalculatorController.h"
+#include "src/Calculator.h"
+#include "src/CalculatorController.h"
 
 int main()
 {

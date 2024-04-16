@@ -3,7 +3,6 @@
 
 Function::Function(const std::shared_ptr<Variable>& valueProvider)
 	: Variable(valueProvider->GetValue()),
-	  ISubscriber(),
 	  m_leftOperand(valueProvider),
 	  m_operation(Operation::None),
 	  m_rightOperand(valueProvider)
@@ -16,7 +15,6 @@ Function::Function(
 	const std::shared_ptr<Variable>& rightOperand
 	)
 	: Variable(),
-	  ISubscriber(),
 	  m_leftOperand(leftOperand),
 	  m_operation(operation),
 	  m_rightOperand(rightOperand)

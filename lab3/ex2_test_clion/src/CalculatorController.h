@@ -17,8 +17,8 @@ private:
 	void Let(std::istream& args);
 	void Fn(std::istream& args);
 	void Print(std::istream& args);
-	void PrintVars(std::istream& args);
-	void PrintFns(std::istream& args);
+	void PrintVars();
+	void PrintFns();
 
 	Operation GetOperation(const std::string& operationString);
 
