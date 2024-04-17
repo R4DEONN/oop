@@ -20,7 +20,7 @@ private:
 	void PrintVars();
 	void PrintFns();
 
-	Operation GetOperation(const std::string& operationString);
+	static Operation GetOperation(const std::string& operationString);
 
 	using Handler = std::function<void(std::istream& args)>;
 

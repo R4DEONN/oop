@@ -17,7 +17,7 @@ enum class Operation
 class Function : public Variable, public ISubscriber
 {
 public:
-	explicit Function(const std::shared_ptr<Variable>& valueProvider);
+	explicit Function(const std::shared_ptr<Variable>& variable);
 
 	Function(
 		const std::shared_ptr<Variable>& leftOperand,

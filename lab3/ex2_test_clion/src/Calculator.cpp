@@ -113,7 +113,7 @@ void Calculator::InitFn(
 	m_functions.emplace(name, function);
 }
 
-std::shared_ptr<Variable> Calculator::FindVariable(const std::string& name)
+std::shared_ptr<Variable> Calculator::FindVariable(const std::string& name) noexcept
 {
 	auto it = m_variables.find(name);
 	if (it == m_variables.end())
@@ -124,7 +124,7 @@ std::shared_ptr<Variable> Calculator::FindVariable(const std::string& name)
 	return it->second;
 }
 
-std::shared_ptr<Function> Calculator::FindFunction(const std::string& name)
+std::shared_ptr<Function> Calculator::FindFunction(const std::string& name) noexcept
 {
 	auto it = m_functions.find(name);
 	if (it == m_functions.end())

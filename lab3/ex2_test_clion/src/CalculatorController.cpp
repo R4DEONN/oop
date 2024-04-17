@@ -97,20 +97,22 @@ void CalculatorController::Fn(std::istream& args)
 {
 	try
 	{
-		std::istreambuf_iterator<char> eos;
-		std::string argsStr(std::istreambuf_iterator<char>(args), eos);
-		std::regex pattern(R"(\s*(\w+)\s*=\s*(\w+))");
+		std::string argsStr;
+		std::getline(args, argsStr);
+
+		std::regex pattern(R"(\s*(\w+)\s*=\s*(\w+)(?:\s*([+*\/-])\s*(\w+))?)");
 		std::smatch matches;
 
-		if (std::regex_match(argsStr, matches, pattern))
+		if (!std::regex_match(argsStr, matches, pattern))
 		{
-			m_calculator.InitFn(matches[1], matches[2]);
-			return;
+			throw SyntaxException("Incorrect syntax of function declaration");
 		}
 
-		std::regex pattern2(R"(\s*(\w+)\s*=\s*(\w+)\s*([+*\/-])\s*(\w+))");
-
-		if (std::regex_match(argsStr, matches, pattern2))
+		if (matches.size() == 3)
+		{
+			m_calculator.InitFn(matches[1], matches[2]);
+		}
+		else if (matches.size() == 5)
 		{
 			m_calculator.InitFn(
 				matches[1],
@@ -138,8 +140,7 @@ void CalculatorController::Print(std::istream& args)
 		if (args >> name)
 		{
 			auto var = m_calculator.GetVariable(name);
-			m_output << var.GetValue();
-			m_output << std::endl;
+			m_output << var.GetValue() << std::endl;
 		}
 	}
 	catch (const std::exception& e)
@@ -154,9 +155,7 @@ void CalculatorController::PrintVars()
 	auto variables = m_calculator.GetVariables();
 	for (auto& pair: variables)
 	{
-		m_output << pair.first << ":";
-		m_output << pair.second->GetValue();
-		m_output << std::endl;
+		m_output << pair.first << ":" << pair.second->GetValue() << std::endl;
 	}
 }
 
@@ -165,9 +164,7 @@ void CalculatorController::PrintFns()
 	auto functions = m_calculator.GetFunctions();
 	for (auto& pair: functions)
 	{
-		m_output << pair.first << ":";
-		m_output << pair.second->GetValue();
-		m_output << std::endl;
+		m_output << pair.first << ":" << pair.second->GetValue() << std::endl;
 	}
 }
 

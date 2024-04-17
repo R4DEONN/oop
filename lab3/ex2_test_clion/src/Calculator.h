@@ -35,9 +35,9 @@ private:
 	std::map<std::string, std::shared_ptr<Variable>> m_variables;
 	std::map<std::string, std::shared_ptr<Function>> m_functions;
 
-	std::shared_ptr<Variable> FindVariable(const std::string& name);
+	std::shared_ptr<Variable> FindVariable(const std::string& name) noexcept;
 
-	std::shared_ptr<Function> FindFunction(const std::string& name);
+	std::shared_ptr<Function> FindFunction(const std::string& name) noexcept;
 
 	std::shared_ptr<Variable> GetOperand(const std::string& name);
 

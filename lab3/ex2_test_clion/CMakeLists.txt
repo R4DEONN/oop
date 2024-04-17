@@ -15,5 +15,4 @@ target_link_libraries(CalculatorApp PRIVATE calculator)
 
 add_subdirectory(test)
 
-# Добавьте зависимость сборки от цели запуска тестов
 add_dependencies(CalculatorApp run_tests)

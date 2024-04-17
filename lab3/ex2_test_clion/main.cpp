@@ -1,13 +1,16 @@
 #include <iostream>
+#include <fstream>
 #include "src/Calculator.h"
 #include "src/CalculatorController.h"
 
 int main()
 {
-	Calculator calculator;
-	CalculatorController calculatorController(calculator, std::cin, std::cout);
+	std::ifstream in("1.txt");
 
-	while (!std::cin.eof() && !std::cin.fail())
+	Calculator calculator;
+	CalculatorController calculatorController(calculator, in, std::cout);
+
+	while (!in.eof() && !in.fail())
 	{
 		if (!calculatorController.HandleCommand())
 		{

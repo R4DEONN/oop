@@ -1,11 +1,11 @@
 #include <stdexcept>
 #include "Function.h"
 
-Function::Function(const std::shared_ptr<Variable>& valueProvider)
-	: Variable(valueProvider->GetValue()),
-	  m_leftOperand(valueProvider),
+Function::Function(const std::shared_ptr<Variable>& variable)
+	: Variable(variable->GetValue()),
+	  m_leftOperand(variable),
 	  m_operation(Operation::None),
-	  m_rightOperand(valueProvider)
+	  m_rightOperand(nullptr)
 {
 }
 
@@ -13,7 +13,7 @@ Function::Function(
 	const std::shared_ptr<Variable>& leftOperand,
 	Operation operation,
 	const std::shared_ptr<Variable>& rightOperand
-	)
+)
 	: Variable(),
 	  m_leftOperand(leftOperand),
 	  m_operation(operation),
@@ -27,7 +27,7 @@ std::optional<double> Function::GetOperationResult(
 	const std::shared_ptr<Variable>& leftOperand,
 	Operation operation,
 	const std::shared_ptr<Variable>& rightOperand
-	)
+)
 {
 	switch (operation)
 	{
