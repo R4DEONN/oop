@@ -13,12 +13,12 @@ public:
 	Variable() = default;
 	explicit Variable(double value);
 	[[nodiscard]] double GetValue() const;
-	virtual void SetValue(double value);
+	void SetValue(double value);
 
 	void Subscribe(const std::shared_ptr<ISubscriber>& sub);
 	void NotifySubscribers();
 
-protected:
+private:
 	double m_value = std::nan("");
 	std::set<std::shared_ptr<ISubscriber>> m_subscribers;
 

@@ -19,28 +19,24 @@ Function::Function(
 	  m_operation(operation),
 	  m_rightOperand(rightOperand)
 {
-	auto result = GetOperationResult(leftOperand, operation, rightOperand);
-	m_value = result.value();
+	auto result = GetOperationResult();
+	SetValue(result);
 }
 
-std::optional<double> Function::GetOperationResult(
-	const std::shared_ptr<Variable>& leftOperand,
-	Operation operation,
-	const std::shared_ptr<Variable>& rightOperand
-)
+double Function::GetOperationResult()
 {
-	switch (operation)
+	switch (m_operation)
 	{
 	case Operation::Plus:
-		return leftOperand->GetValue() + rightOperand->GetValue();
+		return m_leftOperand->GetValue() + m_rightOperand->GetValue();
 	case Operation::Minus:
-		return leftOperand->GetValue() - rightOperand->GetValue();
+		return m_leftOperand->GetValue() - m_rightOperand->GetValue();
 	case Operation::Multiply:
-		return leftOperand->GetValue() * rightOperand->GetValue();
+		return m_leftOperand->GetValue() * m_rightOperand->GetValue();
 	case Operation::Division:
-		return leftOperand->GetValue() / rightOperand->GetValue();
+		return m_leftOperand->GetValue() / m_rightOperand->GetValue();
 	case Operation::None:
-		return leftOperand->GetValue();
+		return m_leftOperand->GetValue();
 	default:
 		throw std::invalid_argument("Unknown operation");
 	}
@@ -48,7 +44,6 @@ std::optional<double> Function::GetOperationResult(
 
 void Function::Update()
 {
-	auto result = GetOperationResult(m_leftOperand, m_operation, m_rightOperand);
-	m_value = result.value();
+	SetValue(GetOperationResult());
 	NotifySubscribers();
 }

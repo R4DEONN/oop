@@ -1,6 +1,7 @@
 include(AddCatch2)
 
-add_executable(tests CalculatorTest.cpp)
+FILE(GLOB_RECURSE SRC "*.cpp")
+add_executable(tests ${SRC})
 target_link_libraries(tests PRIVATE calculator Catch2::Catch2WithMain)
 
 include(CTest)

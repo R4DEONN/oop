@@ -1,5 +1,6 @@
 #include <sstream>
 #include <regex>
+#include <iomanip>
 #include "CustomExceptions.h"
 #include "CalculatorController.h"
 
@@ -100,31 +101,30 @@ void CalculatorController::Fn(std::istream& args)
 		std::string argsStr;
 		std::getline(args, argsStr);
 
-		std::regex pattern(R"(\s*(\w+)\s*=\s*(\w+)(?:\s*([+*\/-])\s*(\w+))?)");
-		std::smatch matches;
+		std::istringstream iss(argsStr);
+		std::string name, leftOperand, operation, rightOperand;
 
-		if (!std::regex_match(argsStr, matches, pattern))
-		{
+		if (!(iss >> name)) {
 			throw SyntaxException("Incorrect syntax of function declaration");
 		}
 
-		if (matches.size() == 3)
-		{
-			m_calculator.InitFn(matches[1], matches[2]);
+		if (!(iss >> operation) || !(iss >> leftOperand) || !(iss >> operation)) {
+			m_calculator.InitFn(name, leftOperand);
+			return;
 		}
-		else if (matches.size() == 5)
-		{
-			m_calculator.InitFn(
-				matches[1],
-				matches[2],
-				GetOperation(matches[3]),
-				matches[4]
-			);
-		}
-		else
-		{
+
+		if (!(iss >> rightOperand)) {
 			throw SyntaxException("Incorrect syntax of function declaration");
 		}
+
+		char c;
+		if (iss.get(c)) {
+			throw SyntaxException("Incorrect syntax of function declaration");
+		}
+
+		Operation op = GetOperation(operation);
+
+		m_calculator.InitFn(name, leftOperand, op, rightOperand);
 	}
 	catch (const std::exception& e)
 	{
@@ -140,7 +140,7 @@ void CalculatorController::Print(std::istream& args)
 		if (args >> name)
 		{
 			auto var = m_calculator.GetVariable(name);
-			m_output << var.GetValue() << std::endl;
+			m_output << std::fixed << std::setprecision(2) << var.GetValue() << std::endl;
 		}
 	}
 	catch (const std::exception& e)

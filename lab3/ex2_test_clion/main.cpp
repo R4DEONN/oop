@@ -5,12 +5,11 @@
 
 int main()
 {
-	std::ifstream in("1.txt");
+//	std::ifstream in("1.txt");
 
 	Calculator calculator;
-	CalculatorController calculatorController(calculator, in, std::cout);
-
-	while (!in.eof() && !in.fail())
+	CalculatorController calculatorController(calculator, std::cin, std::cout);
+	while (!std::cin.eof() && !std::cin.fail())
 	{
 		if (!calculatorController.HandleCommand())
 		{

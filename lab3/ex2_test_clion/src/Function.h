@@ -1,7 +1,6 @@
 #ifndef EX2_FUNCTION_H
 #define EX2_FUNCTION_H
 
-#include <optional>
 #include "Variable.h"
 #include "ISubscriber.h"
 
@@ -25,11 +24,7 @@ public:
 		const std::shared_ptr<Variable>& rightOperand
 	);
 
-	std::optional<double> static GetOperationResult(
-		const std::shared_ptr<Variable>& leftOperand,
-		Operation operation,
-		const std::shared_ptr<Variable>& rightOperand
-	);
+	double GetOperationResult();
 
 	void Update() override;
 
