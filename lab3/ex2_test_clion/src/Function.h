@@ -24,14 +24,14 @@ public:
 		const std::shared_ptr<Variable>& rightOperand
 	);
 
-	double GetOperationResult();
-
 	void Update() override;
 
 private:
 	std::shared_ptr<Variable> m_leftOperand;
 	Operation m_operation;
 	std::shared_ptr<Variable> m_rightOperand;
+
+	double GetOperationResult();
 };
 
 #endif //EX2_FUNCTION_H

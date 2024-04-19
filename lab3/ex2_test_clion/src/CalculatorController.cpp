@@ -54,7 +54,10 @@ void CalculatorController::Var(std::istream& args)
 		{
 			m_calculator.InitVar(name);
 		}
-		//TODO: throw
+		else
+		{
+			throw std::iostream::failure("Error in reading the input stream");
+		}
 	}
 	catch (const std::exception& e)
 	{
@@ -66,26 +69,26 @@ void CalculatorController::Let(std::istream& args)
 {
 	try
 	{
-		std::istreambuf_iterator<char> eos;
-		std::string argsStr(std::istreambuf_iterator<char>(args), eos);
-		std::regex pattern(R"(\s*(\w+)\s*=\s*(\d+.?\d+|\w+))");
-		std::smatch matches;
+		std::string argsStr;
+		std::getline(args, argsStr);
 
-		if (!std::regex_match(argsStr, matches, pattern))
-		{
-			throw SyntaxException("incorrect letting variable");
+		std::istringstream iss(argsStr);
+		std::string name, equalChar, value;
+
+		if (!(iss >> name >> equalChar >> value)) {
+			throw SyntaxException("Incorrect syntax of function declaration");
 		}
 
-		std::istringstream valuestream(matches[2]);
+		std::istringstream valuestream(value);
 		double num;
 
 		if (valuestream >> num)
 		{
-			m_calculator.DeclareAndSetVariable(matches[1], num);
+			m_calculator.DeclareAndSetVariable(name, num);
 		}
 		else
 		{
-			m_calculator.DeclareAndSetVariable(matches[1], matches[2]);
+			m_calculator.DeclareAndSetVariable(name, value);
 		}
 	}
 	catch (const std::exception& e)
@@ -102,13 +105,9 @@ void CalculatorController::Fn(std::istream& args)
 		std::getline(args, argsStr);
 
 		std::istringstream iss(argsStr);
-		std::string name, leftOperand, operation, rightOperand;
+		std::string name, equalChar, leftOperand, operation, rightOperand;
 
-		if (!(iss >> name)) {
-			throw SyntaxException("Incorrect syntax of function declaration");
-		}
-
-		if (!(iss >> operation) || !(iss >> leftOperand) || !(iss >> operation)) {
+		if ((iss >> name >> equalChar >> leftOperand) && !(iss >> operation)) {
 			m_calculator.InitFn(name, leftOperand);
 			return;
 		}
@@ -142,6 +141,10 @@ void CalculatorController::Print(std::istream& args)
 			auto var = m_calculator.GetVariable(name);
 			m_output << std::fixed << std::setprecision(2) << var.GetValue() << std::endl;
 		}
+		else
+		{
+			throw std::iostream::failure("Error in reading the input stream");
+		}
 	}
 	catch (const std::exception& e)
 	{
@@ -151,7 +154,6 @@ void CalculatorController::Print(std::istream& args)
 
 void CalculatorController::PrintVars()
 {
-	//TODO: remove dublicate
 	auto variables = m_calculator.GetVariables();
 	for (auto& pair: variables)
 	{

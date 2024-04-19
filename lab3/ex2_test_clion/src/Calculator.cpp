@@ -1,5 +1,4 @@
 #include "Calculator.h"
-#include <sstream>
 #include "CustomExceptions.h"
 
 std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)

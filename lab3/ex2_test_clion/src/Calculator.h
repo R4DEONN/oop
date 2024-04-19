@@ -6,7 +6,6 @@
 #include "Variable.h"
 #include "Function.h"
 
-
 class Calculator
 {
 public:
