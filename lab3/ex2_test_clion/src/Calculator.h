@@ -42,6 +42,12 @@ private:
 	std::shared_ptr<Variable> GetOperand(const std::string& name);
 
 	std::shared_ptr<Variable> FindOperand(const std::string& name) noexcept;
+
+	void CheckOperandRedefinition(const std::string& name);
+
+	void ValidateVariableName(const std::string& name);
+
+	std::shared_ptr<Variable> FindOrCreateVariable(const std::string& name);
 };
 
 

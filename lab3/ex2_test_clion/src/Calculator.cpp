@@ -4,15 +4,7 @@
 
 std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 {
-	if (name.empty())
-	{
-		throw InvalidNameException("Variable must have a name");
-	}
-	auto it = m_variables.find(name);
-	if (it != m_variables.end())
-	{
-		throw RedefinitionException("Redefinition of '" + name + "'");
-	}
+	ValidateVariableName(name);
 
 	auto variable = std::make_shared<Variable>();
 	m_variables.emplace(name, variable);
@@ -27,30 +19,15 @@ Variable Calculator::GetVariable(const std::string& name)
 
 void Calculator::DeclareAndSetVariable(const std::string& name, double value)
 {
-	//TODO: remove duplicate
-	//TODO: throw overflow
-	auto variable = FindVariable(name);
-	if (variable == nullptr)
-	{
-		variable = InitVar(name);
-	}
-
+	auto variable = FindOrCreateVariable(name);
 	variable->SetValue(value);
 }
 
 void Calculator::DeclareAndSetVariable(const std::string& lname, const std::string& rname)
 {
-	auto leftVar = FindVariable(lname);
-	if (leftVar == nullptr)
-	{
-		leftVar = InitVar(lname);
-	}
+	auto leftVar = FindOrCreateVariable(lname);
 
-	auto rightVar = FindVariable(rname);
-	if (rightVar == nullptr)
-	{
-		throw UndeclaredException("Undeclared variable '" + rname + "'");
-	}
+	auto rightVar = GetOperand(rname);
 
 	leftVar->SetValue(rightVar->GetValue());
 }
@@ -62,15 +39,7 @@ std::map<std::string, std::shared_ptr<Variable>> Calculator::GetVariables()
 
 void Calculator::InitFn(const std::string& lname, const std::string& rname)
 {
-	if (lname.empty())
-	{
-		throw InvalidNameException("Function must have a name");
-	}
-	auto variable = FindOperand(lname);
-	if (variable != nullptr)
-	{
-		throw RedefinitionException("Redefinition of '" + lname + "'");
-	}
+	ValidateVariableName(lname);
 
 	auto operand = GetOperand(rname);
 	auto function = std::make_shared<Function>(operand);
@@ -85,16 +54,8 @@ void Calculator::InitFn(
 	const std::string& rightOperandName
 )
 {
-	//TODO: remove duplicate
-	if (name.empty())
-	{
-		throw InvalidNameException("Function must have a name");
-	}
-	auto variable = FindOperand(name);
-	if (variable != nullptr)
-	{
-		throw RedefinitionException("Redefinition of '" + name + "'");
-	}
+	ValidateVariableName(name);
+
 	if (operation == Operation::None)
 	{
 		throw std::invalid_argument("Unknown operation");
@@ -158,4 +119,32 @@ std::shared_ptr<Variable> Calculator::GetOperand(const std::string& name)
 std::map<std::string, std::shared_ptr<Function>> Calculator::GetFunctions()
 {
 	return m_functions;
+}
+
+void Calculator::CheckOperandRedefinition(const std::string& name)
+{
+	auto it = FindOperand(name);
+	if (it != nullptr)
+	{
+		throw RedefinitionException("Redefinition of '" + name + "'");
+	}
+}
+
+void Calculator::ValidateVariableName(const std::string& name)
+{
+	if (name.empty())
+	{
+		throw InvalidNameException("Variable must have a name");
+	}
+	CheckOperandRedefinition(name);
+}
+
+std::shared_ptr<Variable> Calculator::FindOrCreateVariable(const std::string& name)
+{
+	auto variable = FindVariable(name);
+	if (variable == nullptr)
+	{
+		variable = InitVar(name);
+	}
+	return variable;
 }
