@@ -10,6 +10,7 @@
 class Variable
 {
 public:
+	//TODO: У функции не должно быть SetValue От Variable
 	Variable() = default;
 	explicit Variable(double value);
 	[[nodiscard]] double GetValue() const;
@@ -17,7 +18,7 @@ public:
 
 	void Subscribe(const std::shared_ptr<ISubscriber>& sub);
 	void NotifySubscribers();
-
+	//TODO: Деструктор должен быть публичным и виртуальным, либо защищенным и не виртуальным
 private:
 	double m_value = std::nan("");
 	std::set<std::shared_ptr<ISubscriber>> m_subscribers;
