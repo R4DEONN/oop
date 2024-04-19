@@ -22,12 +22,7 @@ std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 
 Variable Calculator::GetVariable(const std::string& name)
 {
-	auto variable = FindOperand(name);
-	if (variable == nullptr)
-	{
-		throw UndeclaredException("Undeclared variable '" + name + "'");
-	}
-	return *variable;
+	return *GetOperand(name);
 }
 
 void Calculator::DeclareAndSetVariable(const std::string& name, double value)
