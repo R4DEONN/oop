@@ -1,7 +1,7 @@
 #ifndef EX2_FUNCTION_H
 #define EX2_FUNCTION_H
 
-#include "Variable.h"
+#include "ValueProvider.h"
 #include "ISubscriber.h"
 
 enum class Operation
@@ -13,23 +13,23 @@ enum class Operation
 	Division,
 };
 
-class Function : public Variable, public ISubscriber
+class Function : public ValueProvider, public ISubscriber
 {
 public:
-	explicit Function(const std::shared_ptr<Variable>& variable);
+	explicit Function(const std::shared_ptr<ValueProvider>& variable);
 
 	Function(
-		const std::shared_ptr<Variable>& leftOperand,
+		const std::shared_ptr<ValueProvider>& leftOperand,
 		Operation operation,
-		const std::shared_ptr<Variable>& rightOperand
+		const std::shared_ptr<ValueProvider>& rightOperand
 	);
 
 	void Update() override;
 
 private:
-	std::shared_ptr<Variable> m_leftOperand;
+	std::shared_ptr<ValueProvider> m_leftOperand;
 	Operation m_operation;
-	std::shared_ptr<Variable> m_rightOperand;
+	std::shared_ptr<ValueProvider> m_rightOperand;
 
 	double GetOperationResult();
 };

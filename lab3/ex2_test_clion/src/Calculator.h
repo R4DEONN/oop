@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include "ValueProvider.h"
 #include "Variable.h"
 #include "Function.h"
 
@@ -24,27 +25,27 @@ public:
 		const std::string& rightOperandName
 	);
 
-	Variable GetVariable(const std::string& name);
+	[[nodiscard]] double GetValue(const std::string& name) const;
 
-	std::map<std::string, std::shared_ptr<Variable>> GetVariables();
+	[[nodiscard]] std::map<std::string, std::shared_ptr<Variable>> GetVariables() const;
 
-	std::map<std::string, std::shared_ptr<Function>> GetFunctions();
+	[[nodiscard]] std::map<std::string, std::shared_ptr<Function>> GetFunctions() const;
 
 private:
 	std::map<std::string, std::shared_ptr<Variable>> m_variables;
 	std::map<std::string, std::shared_ptr<Function>> m_functions;
 
-	std::shared_ptr<Variable> FindVariable(const std::string& name) noexcept;
+	[[nodiscard]] std::shared_ptr<Variable> FindVariable(const std::string& name) const noexcept;
 
-	std::shared_ptr<Function> FindFunction(const std::string& name) noexcept;
+	[[nodiscard]] std::shared_ptr<Function> FindFunction(const std::string& name) const noexcept;
 
-	std::shared_ptr<Variable> GetOperand(const std::string& name);
+	[[nodiscard]] std::shared_ptr<ValueProvider> GetValueProvider(const std::string& name) const;
 
-	std::shared_ptr<Variable> FindOperand(const std::string& name) noexcept;
+	[[nodiscard]] std::shared_ptr<ValueProvider> FindValueProvider(const std::string& name) const noexcept;
 
-	void CheckOperandRedefinition(const std::string& name);
+	void CheckValueProviderRedefinition(const std::string& name) const;
 
-	void ValidateVariableName(const std::string& name);
+	void ValidateValueProviderName(const std::string& name) const;
 
 	std::shared_ptr<Variable> FindOrCreateVariable(const std::string& name);
 };

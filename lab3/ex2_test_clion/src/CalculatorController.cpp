@@ -138,8 +138,7 @@ void CalculatorController::Print(std::istream& args)
 		std::string name;
 		if (args >> name)
 		{
-			auto var = m_calculator.GetVariable(name);
-			m_output << std::fixed << std::setprecision(2) << var.GetValue() << std::endl;
+			m_output << std::fixed << std::setprecision(2) << m_calculator.GetValue(name) << std::endl;
 		}
 		else
 		{

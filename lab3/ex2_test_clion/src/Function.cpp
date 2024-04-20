@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include "Function.h"
 
-Function::Function(const std::shared_ptr<Variable>& variable)
-	: Variable(variable->GetValue()),
+Function::Function(const std::shared_ptr<ValueProvider>& variable)
+	: ValueProvider(variable->GetValue()),
 	  m_leftOperand(variable),
 	  m_operation(Operation::None),
 	  m_rightOperand(nullptr)
@@ -10,17 +10,17 @@ Function::Function(const std::shared_ptr<Variable>& variable)
 }
 
 Function::Function(
-	const std::shared_ptr<Variable>& leftOperand,
+	const std::shared_ptr<ValueProvider>& leftOperand,
 	Operation operation,
-	const std::shared_ptr<Variable>& rightOperand
+	const std::shared_ptr<ValueProvider>& rightOperand
 )
-	: Variable(),
+	: ValueProvider(),
 	  m_leftOperand(leftOperand),
 	  m_operation(operation),
 	  m_rightOperand(rightOperand)
 {
 	auto result = GetOperationResult();
-	SetValue(result);
+	m_value = result;
 }
 
 double Function::GetOperationResult()
@@ -44,6 +44,6 @@ double Function::GetOperationResult()
 
 void Function::Update()
 {
-	SetValue(GetOperationResult());
+	m_value = GetOperationResult();
 	NotifySubscribers();
 }

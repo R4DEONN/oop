@@ -3,7 +3,7 @@
 
 std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 {
-	ValidateVariableName(name);
+	ValidateValueProviderName(name);
 
 	auto variable = std::make_shared<Variable>();
 	m_variables.emplace(name, variable);
@@ -11,9 +11,9 @@ std::shared_ptr<Variable> Calculator::InitVar(const std::string& name)
 	return variable;
 }
 
-Variable Calculator::GetVariable(const std::string& name)
+double Calculator::GetValue(const std::string& name) const
 {
-	return *GetOperand(name);
+	return GetValueProvider(name)->GetValue();
 }
 
 void Calculator::DeclareAndSetVariable(const std::string& name, double value)
@@ -26,21 +26,22 @@ void Calculator::DeclareAndSetVariable(const std::string& lname, const std::stri
 {
 	auto leftVar = FindOrCreateVariable(lname);
 
-	auto rightVar = GetOperand(rname);
+	auto rightVar = GetValueProvider(rname);
 
 	leftVar->SetValue(rightVar->GetValue());
 }
 
-std::map<std::string, std::shared_ptr<Variable>> Calculator::GetVariables()
+std::map<std::string, std::shared_ptr<Variable>> Calculator::GetVariables() const
 {
+	//TODO: callback
 	return m_variables;
 }
 
 void Calculator::InitFn(const std::string& lname, const std::string& rname)
 {
-	ValidateVariableName(lname);
+	ValidateValueProviderName(lname);
 
-	auto operand = GetOperand(rname);
+	auto operand = GetValueProvider(rname);
 	auto function = std::make_shared<Function>(operand);
 	operand->Subscribe(function);
 	m_functions.emplace(lname, function);
@@ -53,22 +54,22 @@ void Calculator::InitFn(
 	const std::string& rightOperandName
 )
 {
-	ValidateVariableName(name);
+	ValidateValueProviderName(name);
 
 	if (operation == Operation::None)
 	{
 		throw std::invalid_argument("Unknown operation");
 	}
 
-	auto leftOperand = GetOperand(leftOperandName);
-	auto rightOperand = GetOperand(rightOperandName);
+	auto leftOperand = GetValueProvider(leftOperandName);
+	auto rightOperand = GetValueProvider(rightOperandName);
 	auto function = std::make_shared<Function>(leftOperand, operation, rightOperand);
 	leftOperand->Subscribe(function);
 	rightOperand->Subscribe(function);
 	m_functions.emplace(name, function);
 }
 
-std::shared_ptr<Variable> Calculator::FindVariable(const std::string& name) noexcept
+std::shared_ptr<Variable> Calculator::FindVariable(const std::string& name) const noexcept
 {
 	auto it = m_variables.find(name);
 	if (it == m_variables.end())
@@ -79,7 +80,7 @@ std::shared_ptr<Variable> Calculator::FindVariable(const std::string& name) noex
 	return it->second;
 }
 
-std::shared_ptr<Function> Calculator::FindFunction(const std::string& name) noexcept
+std::shared_ptr<Function> Calculator::FindFunction(const std::string& name) const noexcept
 {
 	auto it = m_functions.find(name);
 	if (it == m_functions.end())
@@ -90,9 +91,9 @@ std::shared_ptr<Function> Calculator::FindFunction(const std::string& name) noex
 	return it->second;
 }
 
-std::shared_ptr<Variable> Calculator::FindOperand(const std::string& name) noexcept
+std::shared_ptr<ValueProvider> Calculator::FindValueProvider(const std::string& name) const noexcept
 {
-	auto operand = FindVariable(name);
+	std::shared_ptr<ValueProvider> operand = FindVariable(name);
 	if (operand == nullptr)
 	{
 		operand = FindFunction(name);
@@ -105,9 +106,9 @@ std::shared_ptr<Variable> Calculator::FindOperand(const std::string& name) noexc
 }
 
 
-std::shared_ptr<Variable> Calculator::GetOperand(const std::string& name)
+std::shared_ptr<ValueProvider> Calculator::GetValueProvider(const std::string& name) const
 {
-	auto operand = FindOperand(name);
+	std::shared_ptr<ValueProvider> operand = FindValueProvider(name);
 	if (operand == nullptr)
 	{
 		throw UndeclaredException("Undeclared variable '" + name + "'");
@@ -115,27 +116,28 @@ std::shared_ptr<Variable> Calculator::GetOperand(const std::string& name)
 	return operand;
 }
 
-std::map<std::string, std::shared_ptr<Function>> Calculator::GetFunctions()
+std::map<std::string, std::shared_ptr<Function>> Calculator::GetFunctions() const
 {
+	//TODO callback
 	return m_functions;
 }
 
-void Calculator::CheckOperandRedefinition(const std::string& name)
+void Calculator::CheckValueProviderRedefinition(const std::string& name) const
 {
-	auto it = FindOperand(name);
+	auto it = FindValueProvider(name);
 	if (it != nullptr)
 	{
 		throw RedefinitionException("Redefinition of '" + name + "'");
 	}
 }
 
-void Calculator::ValidateVariableName(const std::string& name)
+void Calculator::ValidateValueProviderName(const std::string& name) const
 {
 	if (name.empty())
 	{
 		throw InvalidNameException("Variable must have a name");
 	}
-	CheckOperandRedefinition(name);
+	CheckValueProviderRedefinition(name);
 }
 
 std::shared_ptr<Variable> Calculator::FindOrCreateVariable(const std::string& name)

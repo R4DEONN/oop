@@ -5,8 +5,9 @@ class ISubscriber
 {
 public:
 	virtual void Update() = 0;
-private:
-	virtual ~ISubscriber() = default;
+
+protected:
+	~ISubscriber() = default;
 };
 
 #endif //EX2_ISUBSCRIBER_H

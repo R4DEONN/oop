@@ -14,8 +14,7 @@ TEST_CASE("Var variables", "[calculator]")
 	SECTION("Var x should be undefined")
 	{
 		calculator.InitVar(varXName);
-		auto var = calculator.GetVariable(varXName);
-		REQUIRE(std::isnan(var.GetValue()));
+		REQUIRE(std::isnan(calculator.GetValue(varXName)));
 	}
 
 	SECTION("Var without name should throw exception")
@@ -34,33 +33,29 @@ TEST_CASE("Letting variable", "[calculator]")
 {
 	Calculator calculator;
 	calculator.DeclareAndSetVariable(varYName, value);
-	auto varY = calculator.GetVariable(varYName);
-	REQUIRE(!std::isnan(varY.GetValue()));
-	REQUIRE(varY.GetValue() == value);
+	REQUIRE(!std::isnan(calculator.GetValue(varYName)));
+	REQUIRE(calculator.GetValue(varYName) == value);
 
 	SECTION("Letting an undeclared variable with double")
 	{
 		calculator.DeclareAndSetVariable(varXName, value);
-		auto var = calculator.GetVariable(varXName);
-		REQUIRE(!std::isnan(var.GetValue()));
-		REQUIRE(var.GetValue() == value);
+		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
+		REQUIRE(calculator.GetValue(varXName) == value);
 	}
 
 	SECTION("Letting a declared variable with double")
 	{
 		calculator.InitVar(varXName);
 		calculator.DeclareAndSetVariable(varXName, value);
-		auto var = calculator.GetVariable(varXName);
-		REQUIRE(!std::isnan(var.GetValue()));
-		REQUIRE(var.GetValue() == value);
+		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
+		REQUIRE(calculator.GetValue(varXName) == value);
 	}
 
 	SECTION("Letting an undeclared variable with another variable")
 	{
 		calculator.DeclareAndSetVariable(varXName, varYName);
-		auto var = calculator.GetVariable(varXName);
-		REQUIRE(!std::isnan(var.GetValue()));
-		REQUIRE(var.GetValue() == value);
+		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
+		REQUIRE(calculator.GetValue(varXName) == value);
 	}
 
 	SECTION("Letting an undeclared variable with undeclared variable should throw exception")
@@ -72,9 +67,8 @@ TEST_CASE("Letting variable", "[calculator]")
 	{
 		calculator.InitVar(varXName);
 		calculator.DeclareAndSetVariable(varXName, varYName);
-		auto var = calculator.GetVariable(varXName);
-		REQUIRE(!std::isnan(var.GetValue()));
-		REQUIRE(var.GetValue() == value);
+		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
+		REQUIRE(calculator.GetValue(varXName) == value);
 	}
 
 	SECTION("Letting a declared variable with undeclared variable should throw exception")
@@ -90,19 +84,19 @@ TEST_CASE("Getting value of variable or function", "[calculator]")
 
 	SECTION("Accessing an undeclared variable")
 	{
-		REQUIRE_THROWS_AS(calculator.GetVariable(varZName), UndeclaredException);
+		REQUIRE_THROWS_AS(calculator.GetValue(varZName), UndeclaredException);
 	}
 
 	SECTION("Accessing an undefined variable")
 	{
 		calculator.InitVar(varXName);
-		REQUIRE(std::isnan(calculator.GetVariable(varXName).GetValue()));
+		REQUIRE(std::isnan(calculator.GetValue(varXName)));
 	}
 
 	SECTION("Accessing a defined variable")
 	{
 		calculator.DeclareAndSetVariable(varYName, 20);
-		REQUIRE(calculator.GetVariable(varYName).GetValue() == 20);
+		REQUIRE(calculator.GetValue(varYName) == 20);
 	}
 }
 
@@ -124,15 +118,13 @@ TEST_CASE("Declare function with one variable", "[calculator]")
 	{
 		calculator.DeclareAndSetVariable(varXName, value);
 		calculator.InitFn(varYName, varXName);
-		auto func = calculator.GetVariable(varYName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value);
+		REQUIRE(!std::isnan(calculator.GetValue(varYName)));
+		REQUIRE(calculator.GetValue(varYName) == value);
 
 		auto newValue = value + 1;
 		calculator.DeclareAndSetVariable(varXName, newValue);
-		func = calculator.GetVariable(varYName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == newValue);
+		REQUIRE(!std::isnan(calculator.GetValue(varYName)));
+		REQUIRE(calculator.GetValue(varYName) == newValue);
 	}
 
 	SECTION("Declare with function then change value of function")
@@ -140,15 +132,13 @@ TEST_CASE("Declare function with one variable", "[calculator]")
 		calculator.DeclareAndSetVariable(varXName, value);
 		calculator.InitFn(varYName, varXName);
 		calculator.InitFn(varZName, varYName);
-		auto func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value);
 
 		auto newValue = value + 1;
 		calculator.DeclareAndSetVariable(varXName, newValue);
-		func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == newValue);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == newValue);
 	}
 }
 
@@ -193,14 +183,12 @@ TEST_CASE("Declare function with operation", "[calculator]")
 			varYName
 		);
 
-		auto func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value + value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value + value);
 
 		calculator.DeclareAndSetVariable(varXName, value + value);
-		func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value + value + value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value + value + value);
 	}
 
 	SECTION("fn z = x - y then change x and y")
@@ -212,15 +200,13 @@ TEST_CASE("Declare function with operation", "[calculator]")
 			varYName
 		);
 
-		auto func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value - value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value - value);
 
 		calculator.DeclareAndSetVariable(varXName, 0);
 		calculator.DeclareAndSetVariable(varYName, 0);
-		func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == 0);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == 0);
 	}
 
 	SECTION("fn z = x * y then change x")
@@ -232,14 +218,12 @@ TEST_CASE("Declare function with operation", "[calculator]")
 			varYName
 		);
 
-		auto func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value * value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value * value);
 
 		calculator.DeclareAndSetVariable(varXName, value * value);
-		func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value * value * value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value * value * value);
 	}
 
 	SECTION("fn z = x / y then change x")
@@ -251,14 +235,12 @@ TEST_CASE("Declare function with operation", "[calculator]")
 			varYName
 		);
 
-		auto func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value / value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value / value);
 
 		calculator.DeclareAndSetVariable(varXName, value / value);
-		func = calculator.GetVariable(varZName);
-		REQUIRE(!std::isnan(func.GetValue()));
-		REQUIRE(func.GetValue() == value / value / value);
+		REQUIRE(!std::isnan(calculator.GetValue(varZName)));
+		REQUIRE(calculator.GetValue(varZName) == value / value / value);
 	}
 
 	SECTION("Operation::None in function should throw exception")
