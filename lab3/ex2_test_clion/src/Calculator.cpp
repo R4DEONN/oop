@@ -22,18 +22,14 @@ void Calculator::DeclareAndSetVariable(const std::string& name, double value)
 	variable->SetValue(value);
 }
 
-void Calculator::DeclareAndSetVariable(const std::string& lname, const std::string& rname)
-{
-	auto leftVar = FindOrCreateVariable(lname);
-
-	auto rightVar = GetValueProvider(rname);
-
-	leftVar->SetValue(rightVar->GetValue());
-}
-
-void Calculator::GetVariables(const std::function<void(const std::map<std::string, std::shared_ptr<Variable>>&)>& cb) const
+void Calculator::EnumerateVariables(VariableHandler cb) const
 {
 	cb(m_variables);
+}
+
+void Calculator::EnumerateFunctions(FunctionHandler cb) const
+{
+	cb(m_functions);
 }
 
 void Calculator::InitFn(const std::string& lname, const std::string& rname)
@@ -113,11 +109,6 @@ std::shared_ptr<ValueProvider> Calculator::GetValueProvider(const std::string& n
 		throw UndeclaredException("Undeclared variable '" + name + "'");
 	}
 	return operand;
-}
-
-void Calculator::GetFunctions(const std::function<void(const std::map<std::string, std::shared_ptr<Function>>&)>& cb) const
-{
-	cb(m_functions);
 }
 
 void Calculator::CheckValueProviderRedefinition(const std::string& name) const

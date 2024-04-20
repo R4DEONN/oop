@@ -8,14 +8,15 @@
 #include "Function.h"
 #include "functional"
 
+using VariableHandler = const std::function<void(const std::map<std::string, std::shared_ptr<Variable>>&)>&;
+using FunctionHandler = const std::function<void(const std::map<std::string, std::shared_ptr<Function>>&)>&;
+
 class Calculator
 {
 public:
 	std::shared_ptr<Variable> InitVar(const std::string& name);
 
 	void DeclareAndSetVariable(const std::string& name, double value);
-
-	void DeclareAndSetVariable(const std::string& lname, const std::string& rname);
 
 	void InitFn(const std::string& lname, const std::string& rname);
 
@@ -28,9 +29,9 @@ public:
 
 	[[nodiscard]] double GetValue(const std::string& name) const;
 
-	void GetVariables(const std::function<void(const std::map<std::string, std::shared_ptr<Variable>>&)>&) const;
+	void EnumerateVariables(VariableHandler cb) const;
 
-	void GetFunctions(const std::function<void(const std::map<std::string, std::shared_ptr<Function>>&)>&) const;
+	void EnumerateFunctions(FunctionHandler cb) const;
 
 private:
 	std::map<std::string, std::shared_ptr<Variable>> m_variables;

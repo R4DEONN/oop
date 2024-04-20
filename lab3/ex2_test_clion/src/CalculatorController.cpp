@@ -82,14 +82,11 @@ void CalculatorController::Let(std::istream& args)
 		std::istringstream valuestream(value);
 		double num;
 
-		if (valuestream >> num)
+		if (!(valuestream >> num))
 		{
-			m_calculator.DeclareAndSetVariable(name, num);
+			num = m_calculator.GetValue(value);
 		}
-		else
-		{
-			m_calculator.DeclareAndSetVariable(name, value);
-		}
+		m_calculator.DeclareAndSetVariable(name, num);
 	}
 	catch (const std::exception& e)
 	{
@@ -153,7 +150,7 @@ void CalculatorController::Print(std::istream& args)
 
 void CalculatorController::PrintVars()
 {
-	m_calculator.GetVariables([this](const std::map<std::string, std::shared_ptr<Variable>>& vars) {
+	m_calculator.EnumerateVariables([this](const std::map<std::string, std::shared_ptr<Variable>>& vars) {
 		for (const auto& var : vars)
 		{
 			m_output << var.first << ":" << var.second->GetValue() << std::endl;
@@ -163,7 +160,7 @@ void CalculatorController::PrintVars()
 
 void CalculatorController::PrintFns()
 {
-	m_calculator.GetFunctions([this](const std::map<std::string, std::shared_ptr<Function>>& funcs) {
+	m_calculator.EnumerateFunctions([this](const std::map<std::string, std::shared_ptr<Function>>& funcs) {
 		for (const auto& func : funcs)
 		{
 			m_output << func.first << ":" << func.second->GetValue() << std::endl;

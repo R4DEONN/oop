@@ -50,32 +50,6 @@ TEST_CASE("Letting variable", "[calculator]")
 		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
 		REQUIRE(calculator.GetValue(varXName) == value);
 	}
-
-	SECTION("Letting an undeclared variable with another variable")
-	{
-		calculator.DeclareAndSetVariable(varXName, varYName);
-		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
-		REQUIRE(calculator.GetValue(varXName) == value);
-	}
-
-	SECTION("Letting an undeclared variable with undeclared variable should throw exception")
-	{
-		REQUIRE_THROWS_AS(calculator.DeclareAndSetVariable(varXName, varZName), UndeclaredException);
-	}
-
-	SECTION("Letting a declared variable with another variable")
-	{
-		calculator.InitVar(varXName);
-		calculator.DeclareAndSetVariable(varXName, varYName);
-		REQUIRE(!std::isnan(calculator.GetValue(varXName)));
-		REQUIRE(calculator.GetValue(varXName) == value);
-	}
-
-	SECTION("Letting a declared variable with undeclared variable should throw exception")
-	{
-		calculator.InitVar(varXName);
-		REQUIRE_THROWS_AS(calculator.DeclareAndSetVariable(varXName, varZName), UndeclaredException);
-	}
 }
 
 TEST_CASE("Getting value of variable or function", "[calculator]")
