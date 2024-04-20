@@ -21,7 +21,7 @@ public:
 	virtual ~ValueProvider() = default;
 
 protected:
-	void NotifySubscribers();
+	void NotifySubscribers() const;
 	double m_value = std::nan("");
 
 private:

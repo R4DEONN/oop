@@ -15,7 +15,7 @@ void ValueProvider::Subscribe(const std::shared_ptr<ISubscriber>& sub)
 	m_subscribers.insert(sub);
 }
 
-void ValueProvider::NotifySubscribers()
+void ValueProvider::NotifySubscribers() const
 {
 	for (const auto& sub : m_subscribers)
 	{
