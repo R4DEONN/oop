@@ -153,20 +153,22 @@ void CalculatorController::Print(std::istream& args)
 
 void CalculatorController::PrintVars()
 {
-	auto variables = m_calculator.GetVariables();
-	for (auto& pair: variables)
-	{
-		m_output << pair.first << ":" << pair.second->GetValue() << std::endl;
-	}
+	m_calculator.GetVariables([this](const std::map<std::string, std::shared_ptr<Variable>>& vars) {
+		for (const auto& var : vars)
+		{
+			m_output << var.first << ":" << var.second->GetValue() << std::endl;
+		}
+	});
 }
 
 void CalculatorController::PrintFns()
 {
-	auto functions = m_calculator.GetFunctions();
-	for (auto& pair: functions)
-	{
-		m_output << pair.first << ":" << pair.second->GetValue() << std::endl;
-	}
+	m_calculator.GetFunctions([this](const std::map<std::string, std::shared_ptr<Function>>& funcs) {
+		for (const auto& func : funcs)
+		{
+			m_output << func.first << ":" << func.second->GetValue() << std::endl;
+		}
+	});
 }
 
 Operation CalculatorController::GetOperation(const std::string& operationString)

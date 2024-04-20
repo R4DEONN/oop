@@ -31,10 +31,9 @@ void Calculator::DeclareAndSetVariable(const std::string& lname, const std::stri
 	leftVar->SetValue(rightVar->GetValue());
 }
 
-std::map<std::string, std::shared_ptr<Variable>> Calculator::GetVariables() const
+void Calculator::GetVariables(const std::function<void(const std::map<std::string, std::shared_ptr<Variable>>&)>& cb) const
 {
-	//TODO: callback
-	return m_variables;
+	cb(m_variables);
 }
 
 void Calculator::InitFn(const std::string& lname, const std::string& rname)
@@ -116,10 +115,9 @@ std::shared_ptr<ValueProvider> Calculator::GetValueProvider(const std::string& n
 	return operand;
 }
 
-std::map<std::string, std::shared_ptr<Function>> Calculator::GetFunctions() const
+void Calculator::GetFunctions(const std::function<void(const std::map<std::string, std::shared_ptr<Function>>&)>& cb) const
 {
-	//TODO callback
-	return m_functions;
+	cb(m_functions);
 }
 
 void Calculator::CheckValueProviderRedefinition(const std::string& name) const

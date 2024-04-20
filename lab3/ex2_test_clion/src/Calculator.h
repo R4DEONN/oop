@@ -6,6 +6,7 @@
 #include "ValueProvider.h"
 #include "Variable.h"
 #include "Function.h"
+#include "functional"
 
 class Calculator
 {
@@ -27,9 +28,9 @@ public:
 
 	[[nodiscard]] double GetValue(const std::string& name) const;
 
-	[[nodiscard]] std::map<std::string, std::shared_ptr<Variable>> GetVariables() const;
+	void GetVariables(const std::function<void(const std::map<std::string, std::shared_ptr<Variable>>&)>&) const;
 
-	[[nodiscard]] std::map<std::string, std::shared_ptr<Function>> GetFunctions() const;
+	void GetFunctions(const std::function<void(const std::map<std::string, std::shared_ptr<Function>>&)>&) const;
 
 private:
 	std::map<std::string, std::shared_ptr<Variable>> m_variables;
