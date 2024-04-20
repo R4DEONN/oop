@@ -3,6 +3,7 @@
 
 #include "ValueProvider.h"
 #include "ISubscriber.h"
+#include <iostream>
 
 enum class Operation
 {
@@ -16,13 +17,18 @@ enum class Operation
 class Function : public ValueProvider, public ISubscriber
 {
 public:
-	explicit Function(const std::shared_ptr<ValueProvider>& variable);
+	explicit Function(const std::shared_ptr<ValueProvider>& valueProvider);
 
 	Function(
 		const std::shared_ptr<ValueProvider>& leftOperand,
 		Operation operation,
 		const std::shared_ptr<ValueProvider>& rightOperand
 	);
+
+	~Function() override
+	{
+		std::cout << "Function is destroyed" << std::endl;
+	}
 
 	void Update() override;
 

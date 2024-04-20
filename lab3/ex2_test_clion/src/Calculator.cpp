@@ -38,7 +38,6 @@ void Calculator::InitFn(const std::string& lname, const std::string& rname)
 
 	auto operand = GetValueProvider(rname);
 	auto function = std::make_shared<Function>(operand);
-	operand->Subscribe(function);
 	m_functions.emplace(lname, function);
 }
 
@@ -59,8 +58,6 @@ void Calculator::InitFn(
 	auto leftOperand = GetValueProvider(leftOperandName);
 	auto rightOperand = GetValueProvider(rightOperandName);
 	auto function = std::make_shared<Function>(leftOperand, operation, rightOperand);
-	leftOperand->Subscribe(function);
-	rightOperand->Subscribe(function);
 	m_functions.emplace(name, function);
 }
 

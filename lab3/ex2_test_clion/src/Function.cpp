@@ -1,12 +1,14 @@
 #include <stdexcept>
 #include "Function.h"
 
-Function::Function(const std::shared_ptr<ValueProvider>& variable)
-	: ValueProvider(variable->GetValue()),
-	  m_leftOperand(variable),
+Function::Function(const std::shared_ptr<ValueProvider>& valueProvider)
+	: ValueProvider(valueProvider->GetValue()),
+	  m_leftOperand(valueProvider),
 	  m_operation(Operation::None),
 	  m_rightOperand(nullptr)
 {
+	std::cout << "Function is created" << std::endl;
+	valueProvider->Subscribe(this);
 }
 
 Function::Function(
@@ -19,6 +21,8 @@ Function::Function(
 	  m_operation(operation),
 	  m_rightOperand(rightOperand)
 {
+	m_leftOperand->Subscribe(this);
+	m_rightOperand->Subscribe(this);
 	auto result = GetOperationResult();
 	m_value = result;
 }

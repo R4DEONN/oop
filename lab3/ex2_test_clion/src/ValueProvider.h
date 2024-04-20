@@ -16,16 +16,16 @@ public:
 
 	[[nodiscard]] double GetValue() const;
 
-	void Subscribe(const std::shared_ptr<ISubscriber>& sub);
+	void Subscribe(ISubscriber* sub);
 
 	virtual ~ValueProvider() = default;
 
 protected:
 	void NotifySubscribers() const;
-	double m_value = std::nan("");
+	double m_value = std::numeric_limits<double>::quiet_NaN();
 
 private:
-	std::set<std::shared_ptr<ISubscriber>> m_subscribers;
+	std::set<ISubscriber*> m_subscribers;
 };
 
 

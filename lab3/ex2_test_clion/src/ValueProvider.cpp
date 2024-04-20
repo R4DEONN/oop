@@ -10,7 +10,7 @@ double ValueProvider::GetValue() const
 	return m_value;
 }
 
-void ValueProvider::Subscribe(const std::shared_ptr<ISubscriber>& sub)
+void ValueProvider::Subscribe(ISubscriber* sub)
 {
 	m_subscribers.insert(sub);
 }
