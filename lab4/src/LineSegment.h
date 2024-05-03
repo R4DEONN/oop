@@ -5,18 +5,27 @@
 #include "Point.h"
 #include <cmath>
 
+struct LineSegmentData
+{
+	Point startPoint;
+	Point endPoint;
+	uint32_t outlineColor;
+};
+
 class LineSegment : public IShape
 {
 public:
-	LineSegment(Point startPoint, Point endPoint);
 	LineSegment(Point startPoint, Point endPoint, uint32_t outlineColor);
+	explicit LineSegment(LineSegmentData lineSegmentData);
 	[[nodiscard]] double GetArea() const override;
 	[[nodiscard]] double GetPerimeter() const override;
 	[[nodiscard]] uint32_t GetOutlineColor() const override;
-	std::string ToString() const override;
+	[[nodiscard]] std::string ToString() const override;
 
-	Point GetStartPoint() const;
-	Point GetEndPoint() const;
+	[[nodiscard]] Point GetStartPoint() const;
+	[[nodiscard]] Point GetEndPoint() const;
+
+	void Draw(ICanvas &canvas) override;
 
 private:
 	Point m_startPoint;

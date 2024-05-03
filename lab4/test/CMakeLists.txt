@@ -2,7 +2,7 @@ include(AddCatch2)
 
 FILE(GLOB_RECURSE SRC "*.cpp")
 add_executable(tests ${SRC})
-target_link_libraries(tests PRIVATE canvas Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE canvas Catch2::Catch2WithMain sfml-graphics sfml-window sfml-system)
 
 include(CTest)
 include(Catch)

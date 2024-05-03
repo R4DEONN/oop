@@ -12,6 +12,17 @@ Triangle::Triangle(Point firstPoint, Point secondPoint, Point thirdPoint, uint32
 
 }
 
+Triangle::Triangle(TriangleData triangleData)
+	: m_firstPoint(triangleData.firstPoint),
+	  m_secondPoint(triangleData.secondPoint),
+	  m_thirdPoint(triangleData.thirdPoint),
+	  m_outlineColor(triangleData.outlineColor),
+	  m_fillColor(triangleData.fillColor)
+{
+
+}
+
+
 double Triangle::GetArea() const
 {
 	return 0.5 * std::abs(
@@ -23,9 +34,9 @@ double Triangle::GetArea() const
 
 double Triangle::GetPerimeter() const
 {
-	auto firstLine = LineSegment(m_firstPoint, m_secondPoint);
-	auto secondLine = LineSegment(m_secondPoint, m_thirdPoint);
-	auto thirdLine = LineSegment(m_thirdPoint, m_firstPoint);
+	auto firstLine = LineSegment(m_firstPoint, m_secondPoint, 0);
+	auto secondLine = LineSegment(m_secondPoint, m_thirdPoint, 0);
+	auto thirdLine = LineSegment(m_thirdPoint, m_firstPoint, 0);
 	return firstLine.GetPerimeter() + secondLine.GetPerimeter() + thirdLine.GetPerimeter();
 }
 
@@ -45,4 +56,9 @@ std::string Triangle::ToString() const
 		   "Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n" +
 		   "Stroke color: " + toStringHex(GetOutlineColor()) + "\n" +
 		   "Fill color: " + toStringHex(GetFillColor()) + "\n";
+}
+
+void Triangle::Draw(ICanvas& canvas)
+{
+	canvas.FillPolygon({m_firstPoint, m_secondPoint, m_thirdPoint}, m_fillColor);
 }

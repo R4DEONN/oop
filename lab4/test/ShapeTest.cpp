@@ -16,17 +16,6 @@ TEST_CASE("ReadLine to string")
 	REQUIRE(expectedOutput == lineSegment.ToString());
 }
 
-TEST_CASE("ReadLine to string w/o outline")
-{
-	LineSegment lineSegment({0, 0}, {1000, 0});
-
-	std::string expectedOutput =
-		"Square: 0.00\n"
-		"Perimeter: 1000.00\n";
-
-	REQUIRE(expectedOutput == lineSegment.ToString());
-}
-
 TEST_CASE("ReadTriangle to string")
 {
 	Triangle triangle({0, 0}, {12, 0}, {0, 5}, 0xff0010, 0xf0ff00);

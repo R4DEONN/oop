@@ -11,6 +11,15 @@ Circle::Circle(Point center, double radius, uint32_t outlineColor, uint32_t fill
 
 }
 
+Circle::Circle(CircleData circleData)
+	: m_center(circleData.center),
+	  m_radius(circleData.radius),
+	  m_outlineColor(circleData.outlineColor),
+	  m_fillColor(circleData.fillColor)
+{
+
+}
+
 double Circle::GetArea() const
 {
 	return M_PI * m_radius * m_radius;
@@ -48,5 +57,11 @@ std::string Circle::ToString() const
 		   "Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n" +
 		   "Stroke color: " + toStringHex(GetOutlineColor()) + "\n" +
 		   "Fill color: " + toStringHex(GetFillColor()) + "\n";
+}
+
+void Circle::Draw(ICanvas& canvas)
+{
+	canvas.DrawCircle(m_center, m_radius, m_outlineColor);
+	canvas.FillCircle(m_center, m_radius, m_fillColor);
 }
 

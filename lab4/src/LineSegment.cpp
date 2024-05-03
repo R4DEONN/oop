@@ -2,12 +2,6 @@
 #include "utils.h"
 #include <cmath>
 
-LineSegment::LineSegment(Point startPoint, Point endPoint)
-	: m_startPoint(startPoint),
-	  m_endPoint(endPoint)
-{
-}
-
 LineSegment::LineSegment(Point startPoint, Point endPoint, uint32_t outlineColor)
 	: m_startPoint(startPoint),
 	  m_endPoint(endPoint),
@@ -15,6 +9,14 @@ LineSegment::LineSegment(Point startPoint, Point endPoint, uint32_t outlineColor
 {
 }
 
+LineSegment::LineSegment(LineSegmentData lineSegmentData)
+	: m_startPoint(lineSegmentData.startPoint),
+	  m_endPoint(lineSegmentData.endPoint),
+	  m_outlineColor(lineSegmentData.outlineColor)
+
+{
+
+}
 
 double LineSegment::GetArea() const
 {
@@ -38,11 +40,23 @@ std::string LineSegment::ToString() const
 {
 	std::string info =
 		"Square: " + toStringWithPrecision(GetArea()) + "\n" +
-		"Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n";
+		"Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n" +
+		"Stroke color: " + toStringHex(GetOutlineColor()) + "\n";
 
-	if (m_outlineColor)
-	{
-		info += "Stroke color: " + toStringHex(GetOutlineColor()) + "\n";
-	}
 	return info;
+}
+
+Point LineSegment::GetStartPoint() const
+{
+	return m_startPoint;
+}
+
+Point LineSegment::GetEndPoint() const
+{
+	return m_endPoint;
+}
+
+void LineSegment::Draw(ICanvas& canvas)
+{
+	canvas.DrawLine(m_startPoint, m_endPoint, m_outlineColor);
 }

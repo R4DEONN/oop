@@ -28,9 +28,13 @@ public:
 	[[nodiscard]] Point GetRightBottom() const;
 	[[nodiscard]] double GetWidth() const;
 	[[nodiscard]] double GetHeight() const;
+
+	void Draw(ICanvas &canvas) override;
 private:
 	Point m_leftTop;
+	Point m_rightTop;
 	Point m_rightBottom;
+	Point m_leftBottom;
 	uint32_t m_outlineColor;
 	uint32_t m_fillColor;
 	double m_width;

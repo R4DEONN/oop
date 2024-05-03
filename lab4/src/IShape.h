@@ -2,9 +2,10 @@
 #define _ISHAPE_H
 
 #include <string>
-#include <stdint.h>
+#include <cstdint>
+#include "ICanvasDrawable.h"
 
-class IShape
+class IShape : public ICanvasDrawable
 {
 public:
 	[[nodiscard]] virtual double GetArea() const = 0;

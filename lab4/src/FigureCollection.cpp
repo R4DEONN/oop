@@ -1,6 +1,7 @@
+#include <memory>
 #include "FigureCollection.h"
 
-void FigureCollection::Insert(IShape* shape)
+void FigureCollection::Insert(const std::shared_ptr<IShape>& shape)
 {
 	m_shapes.push_back(shape);
 }

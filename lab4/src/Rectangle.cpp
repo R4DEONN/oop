@@ -7,7 +7,9 @@ m_width(width),
 m_height(height),
 m_outlineColor(outlineColor),
 m_fillColor(fillColor),
-m_rightBottom({leftTopPoint.x + width, leftTopPoint.y + height})
+m_rightBottom({leftTopPoint.x + width, leftTopPoint.y + height}),
+m_rightTop({leftTopPoint.x + width, leftTopPoint.y}),
+m_leftBottom({leftTopPoint.x, leftTopPoint.y + height})
 {
 
 }
@@ -21,7 +23,9 @@ Rectangle::Rectangle(RectangleData rectangleData)
 	  m_rightBottom({
 		  rectangleData.leftTopPoint.x + rectangleData.width,
 		  rectangleData.leftTopPoint.y + rectangleData.height
-	  })
+	  }),
+	  m_rightTop({rectangleData.leftTopPoint.x + rectangleData.width, rectangleData.leftTopPoint.y}),
+	  m_leftBottom({rectangleData.leftTopPoint.x, rectangleData.leftTopPoint.y + rectangleData.height})
 {
 
 }
@@ -72,4 +76,14 @@ std::string Rectangle::ToString() const
 		   "Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n" +
 		   "Stroke color: " + toStringHex(GetOutlineColor()) + "\n" +
 		   "Fill color: " + toStringHex(GetFillColor()) + "\n";
+}
+
+void Rectangle::Draw(ICanvas& canvas)
+{
+	canvas.FillPolygon({
+		m_leftTop,
+		m_leftBottom,
+		m_rightBottom,
+		m_rightTop
+	}, m_fillColor);
 }

@@ -5,17 +5,18 @@
 #include <map>
 #include "IShape.h"
 #include "vector"
+#include "memory"
 
-using ShapeHandler = const std::function<void(const std::vector<IShape*>&)>;
+using ShapeHandler = const std::function<void(const std::vector<std::shared_ptr<IShape>>&)>;
 
 class FigureCollection
 {
 public:
 	FigureCollection() = default;
-	void Insert(IShape* shape);
+	void Insert(const std::shared_ptr<IShape>& shape);
 	void EnumerateShapes(ShapeHandler& cb) const;
 private:
-	std::vector<IShape*> m_shapes;
+	std::vector<std::shared_ptr<IShape>> m_shapes;
 };
 
 
