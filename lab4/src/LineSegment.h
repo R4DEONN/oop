@@ -1,8 +1,9 @@
-#ifndef _LINESEGMENT_H
-#define _LINESEGMENT_H
+#ifndef LINESEGMENT_H
+#define LINESEGMENT_H
 
 #include "IShape.h"
 #include "Point.h"
+#include "Shape.h"
 #include <cmath>
 
 struct LineSegmentData
@@ -12,20 +13,18 @@ struct LineSegmentData
 	uint32_t outlineColor;
 };
 
-class LineSegment : public IShape
+class LineSegment : public Shape
 {
 public:
 	LineSegment(Point startPoint, Point endPoint, uint32_t outlineColor);
 	explicit LineSegment(LineSegmentData lineSegmentData);
 	[[nodiscard]] double GetArea() const override;
 	[[nodiscard]] double GetPerimeter() const override;
-	[[nodiscard]] uint32_t GetOutlineColor() const override;
-	[[nodiscard]] std::string ToString() const override;
 
 	[[nodiscard]] Point GetStartPoint() const;
 	[[nodiscard]] Point GetEndPoint() const;
 
-	void Draw(ICanvas &canvas) override;
+	void Draw(ICanvas &canvas) const override;
 
 private:
 	Point m_startPoint;
@@ -34,4 +33,4 @@ private:
 };
 
 
-#endif //_LINESEGMENT_H
+#endif //LINESEGMENT_H

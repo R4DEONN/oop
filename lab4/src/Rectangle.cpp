@@ -1,31 +1,19 @@
 #include "Rectangle.h"
-#include "utils.h"
 
 Rectangle::Rectangle(Point leftTopPoint, double width, double height, uint32_t outlineColor, uint32_t fillColor)
-: m_leftTop(leftTopPoint),
-m_width(width),
-m_height(height),
-m_outlineColor(outlineColor),
-m_fillColor(fillColor),
-m_rightBottom({leftTopPoint.x + width, leftTopPoint.y + height}),
-m_rightTop({leftTopPoint.x + width, leftTopPoint.y}),
-m_leftBottom({leftTopPoint.x, leftTopPoint.y + height})
+	: SolidShape(outlineColor, fillColor),
+	  m_leftTop(leftTopPoint),
+	  m_width(width),
+	  m_height(height)
 {
 
 }
 
 Rectangle::Rectangle(RectangleData rectangleData)
-	: m_leftTop(rectangleData.leftTopPoint),
+	: SolidShape(rectangleData.outlineColor, rectangleData.fillColor),
+	  m_leftTop(rectangleData.leftTopPoint),
 	  m_width(rectangleData.width),
-	  m_height(rectangleData.height),
-	  m_outlineColor(rectangleData.outlineColor),
-	  m_fillColor(rectangleData.fillColor),
-	  m_rightBottom({
-		  rectangleData.leftTopPoint.x + rectangleData.width,
-		  rectangleData.leftTopPoint.y + rectangleData.height
-	  }),
-	  m_rightTop({rectangleData.leftTopPoint.x + rectangleData.width, rectangleData.leftTopPoint.y}),
-	  m_leftBottom({rectangleData.leftTopPoint.x, rectangleData.leftTopPoint.y + rectangleData.height})
+	  m_height(rectangleData.height)
 {
 
 }
@@ -40,16 +28,6 @@ double Rectangle::GetPerimeter() const
 	return m_width * 2 + m_height * 2;
 }
 
-uint32_t Rectangle::GetOutlineColor() const
-{
-	return m_outlineColor;
-}
-
-uint32_t Rectangle::GetFillColor() const
-{
-	return m_fillColor;
-}
-
 Point Rectangle::GetLeftTop() const
 {
 	return m_leftTop;
@@ -57,7 +35,7 @@ Point Rectangle::GetLeftTop() const
 
 Point Rectangle::GetRightBottom() const
 {
-	return m_rightBottom;
+	return { m_leftTop.x + m_width, m_leftTop.y + m_height };
 }
 
 double Rectangle::GetWidth() const
@@ -70,20 +48,12 @@ double Rectangle::GetHeight() const
 	return m_height;
 }
 
-std::string Rectangle::ToString() const
-{
-	return "Square: " + toStringWithPrecision(GetArea()) + "\n" +
-		   "Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n" +
-		   "Stroke color: " + toStringHex(GetOutlineColor()) + "\n" +
-		   "Fill color: " + toStringHex(GetFillColor()) + "\n";
-}
-
-void Rectangle::Draw(ICanvas& canvas)
+void Rectangle::Draw(ICanvas& canvas) const
 {
 	canvas.FillPolygon({
 		m_leftTop,
-		m_leftBottom,
-		m_rightBottom,
-		m_rightTop
-	}, m_fillColor);
+		{ m_leftTop.x, m_leftTop.y + m_height },
+		{ m_leftTop.x + m_width, m_leftTop.y + m_height },
+		{ m_leftTop.x + m_width, m_leftTop.y }
+	}, SolidShape::GetFillColor());
 }

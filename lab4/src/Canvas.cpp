@@ -2,8 +2,8 @@
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/ConvexShape.hpp"
 
-Canvas::Canvas(sf::RenderWindow& window)
-: m_window(window)
+Canvas::Canvas(sf::RenderTarget& renderTarget)
+: m_renderTarget(renderTarget)
 {
 
 }
@@ -17,10 +17,10 @@ void Canvas::DrawLine(Point from, Point to, uint32_t lineColor)
 			sf::Vertex(sf::Vector2f(to.x, to.y), sf::Color(lineColor))
 		};
 
-	m_window.draw(line, 2, sf::Lines);
+	m_renderTarget.draw(line, 2, sf::Lines);
 }
 
-void Canvas::FillPolygon(std::vector<Point> points, uint32_t fillColor)
+void Canvas::FillPolygon(const std::vector<Point>& points, uint32_t fillColor)
 {
 	sf::ConvexShape convex;
 
@@ -34,21 +34,23 @@ void Canvas::FillPolygon(std::vector<Point> points, uint32_t fillColor)
 
 	convex.setFillColor(sf::Color(fillColor));
 
-	m_window.draw(convex);
+	m_renderTarget.draw(convex);
 }
 
 void Canvas::DrawCircle(Point center, double radius, uint32_t lineColor)
 {
 	sf::CircleShape shape(radius, 60);
+	shape.setOrigin(radius, radius);
 	shape.setPosition(center.x, center.y);
 	shape.setOutlineColor(sf::Color(lineColor));
-	m_window.draw(shape);
+	m_renderTarget.draw(shape);
 }
 
 void Canvas::FillCircle(Point center, double radius, uint32_t fillColor)
 {
 	sf::CircleShape shape(radius, 60);
+	shape.setOrigin(radius, radius);
 	shape.setPosition(center.x, center.y);
 	shape.setFillColor(sf::Color(fillColor));
-	m_window.draw(shape);
+	m_renderTarget.draw(shape);
 }

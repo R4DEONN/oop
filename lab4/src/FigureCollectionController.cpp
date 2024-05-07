@@ -49,36 +49,45 @@ bool FigureCollectionController::HandleCommand()
 
 void FigureCollectionController::PrintFigureWithMaxSquare() const
 {
-	m_figureCollection.EnumerateShapes([this](const std::vector<std::shared_ptr<IShape>>& shapes)
+	if (m_figureCollection.GetLength() == 0)
 	{
-		auto FigureWithMaxSquare = shapes[0];
-		for (const auto& shape: shapes)
+		return;
+	}
+
+	std::shared_ptr<IShape> FigureWithMaxSquare = nullptr;
+
+	m_figureCollection.EnumerateShapes([&](const std::shared_ptr<IShape>& shape)
+	{
+		if (FigureWithMaxSquare == nullptr
+			|| shape->GetArea() > FigureWithMaxSquare->GetArea())
 		{
-			if (shape->GetArea() > FigureWithMaxSquare->GetArea())
-			{
-				FigureWithMaxSquare = shape;
-			}
+			FigureWithMaxSquare = shape;
 		}
 
-		m_output << "Max square figure" << std::endl << FigureWithMaxSquare->ToString() << std::endl;
 	});
+
+	m_output << "Max square figure" << std::endl << FigureWithMaxSquare->ToString() << std::endl;
 }
 
 void FigureCollectionController::PrintFigureWithMinPerimeter() const
 {
-	m_figureCollection.EnumerateShapes([this](const std::vector<std::shared_ptr<IShape>>& shapes)
+	if (m_figureCollection.GetLength() == 0)
 	{
-		auto FigureWithMinPerimeter = shapes[0];
-		for (const auto& shape: shapes)
-		{
-			if (shape->GetPerimeter() < FigureWithMinPerimeter->GetPerimeter())
-			{
-				FigureWithMinPerimeter = shape;
-			}
-		}
+		return;
+	}
 
-		m_output << "Min perimeter figure" << std::endl << FigureWithMinPerimeter->ToString() << std::endl;
+	std::shared_ptr<IShape> FigureWithMinPerimeter = nullptr;
+
+	m_figureCollection.EnumerateShapes([&](const std::shared_ptr<IShape>& shape)
+	{
+		if (FigureWithMinPerimeter == nullptr
+			|| shape->GetPerimeter() < FigureWithMinPerimeter->GetPerimeter())
+		{
+			FigureWithMinPerimeter = shape;
+		}
 	});
+
+	m_output << "Min perimeter figure" << std::endl << FigureWithMinPerimeter->ToString() << std::endl;
 }
 
 void FigureCollectionController::ReadRectangle(std::istream& args)
@@ -138,7 +147,8 @@ void FigureCollectionController::ReadTriangle(std::istream& args)
 		std::string argsStr;
 		std::getline(args, argsStr); // Чтение строки из входного потока
 
-		std::regex pattern(R"(\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(\w+)\s+(\w+))");
+		std::regex pattern(
+			R"(\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(-?\d+.?\d*)\s+(\w+)\s+(\w+))");
 		std::smatch matches = ValidateAndExtractShapeDeclaration(argsStr, pattern);
 
 		auto triangleData = ParseTriangleData(matches);
@@ -235,12 +245,9 @@ std::smatch FigureCollectionController::ValidateAndExtractShapeDeclaration(
 void FigureCollectionController::DrawShapes(sf::RenderWindow& window) const
 {
 	Canvas canvas(window);
-	m_figureCollection.EnumerateShapes([&](const std::vector<std::shared_ptr<IShape>>& shapes)
+	m_figureCollection.EnumerateShapes([&](const std::shared_ptr<IShape>& shape)
 	{
-		for (const auto& shape: shapes)
-		{
-			shape->Draw(canvas);
-		}
+		shape->Draw(canvas);
 	});
 }
 

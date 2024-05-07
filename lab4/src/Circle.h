@@ -1,7 +1,7 @@
 #ifndef _CIRCLE_H
 #define _CIRCLE_H
 
-#include "ISolidShape.h"
+#include "SolidShape.h"
 #include "Point.h"
 
 struct CircleData
@@ -12,7 +12,7 @@ struct CircleData
 	uint32_t fillColor;
 };
 
-class Circle : public ISolidShape
+class Circle : public SolidShape
 {
 public:
 	Circle(Point center, double radius, uint32_t outlineColor, uint32_t fillColor);
@@ -23,23 +23,15 @@ public:
 
 	double GetPerimeter() const override;
 
-	uint32_t GetOutlineColor() const override;
-
-	uint32_t GetFillColor() const override;
-
-	std::string ToString() const override;
-
 	Point GetCenter() const;
 
 	double GetRadius() const;
 
-	void Draw(ICanvas &canvas) override;
+	void Draw(ICanvas &canvas) const override;
 
 private:
 	Point m_center;
 	double m_radius;
-	uint32_t m_outlineColor;
-	uint32_t m_fillColor;
 };
 
 

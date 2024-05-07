@@ -152,29 +152,5 @@ TEST_CASE("Four figure")
 
 	REQUIRE(expectedOutput == output.str());
 }
-//
-//TEST_CASE("PrintFigureWithMaxSquare")
-//{
-//	FigureCollection figureCollection;
-//
-//	std::istringstream input("rectangle 10.3 20.15 30.7 40.4 ff0000 00ff00");
-//	std::ostringstream output;
-//
-//	FigureCollectionController figureCollectionController(figureCollection, input, output);
-//	HandleCommands(figureCollectionController, input);
-//
-//	std::string expectedOutput =
-//		"Max square figure\n"
-//		"Square: 1240.28\n"
-//		"Perimeter: 142.20\n"
-//		"Stroke color: ff0000\n"
-//		"Fill color: 00ff00\n"
-//
-//		"Min perimeter figure\n"
-//		"Square: 1240.28\n"
-//		"Perimeter: 142.20\n"
-//		"Stroke color: ff0000\n"
-//		"Fill color: 00ff00\n";
-//
-//	REQUIRE(expectedOutput == output.str());
-//}
+
+//TODO: Draw выводить в Output вызовы canvas

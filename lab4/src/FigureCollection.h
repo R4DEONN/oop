@@ -7,14 +7,15 @@
 #include "vector"
 #include "memory"
 
-using ShapeHandler = const std::function<void(const std::vector<std::shared_ptr<IShape>>&)>;
+using ShapeHandler = std::function<void(const std::shared_ptr<IShape>&)>;
 
 class FigureCollection
 {
 public:
 	FigureCollection() = default;
 	void Insert(const std::shared_ptr<IShape>& shape);
-	void EnumerateShapes(ShapeHandler& cb) const;
+	void EnumerateShapes(const ShapeHandler& cb) const;
+	size_t GetLength() const;
 private:
 	std::vector<std::shared_ptr<IShape>> m_shapes;
 };

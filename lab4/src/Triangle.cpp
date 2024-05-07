@@ -1,27 +1,23 @@
 #include "Triangle.h"
-#include "LineSegment.h"
 #include "utils.h"
 
 Triangle::Triangle(Point firstPoint, Point secondPoint, Point thirdPoint, uint32_t outlineColor, uint32_t fillColor)
-	: m_firstPoint(firstPoint),
+	: SolidShape(outlineColor, fillColor),
+	  m_firstPoint(firstPoint),
 	  m_secondPoint(secondPoint),
-	  m_thirdPoint(thirdPoint),
-	  m_outlineColor(outlineColor),
-	  m_fillColor(fillColor)
+	  m_thirdPoint(thirdPoint)
 {
 
 }
 
 Triangle::Triangle(TriangleData triangleData)
-	: m_firstPoint(triangleData.firstPoint),
+	: SolidShape(triangleData.outlineColor, triangleData.fillColor),
+	m_firstPoint(triangleData.firstPoint),
 	  m_secondPoint(triangleData.secondPoint),
-	  m_thirdPoint(triangleData.thirdPoint),
-	  m_outlineColor(triangleData.outlineColor),
-	  m_fillColor(triangleData.fillColor)
+	  m_thirdPoint(triangleData.thirdPoint)
 {
 
 }
-
 
 double Triangle::GetArea() const
 {
@@ -34,31 +30,13 @@ double Triangle::GetArea() const
 
 double Triangle::GetPerimeter() const
 {
-	auto firstLine = LineSegment(m_firstPoint, m_secondPoint, 0);
-	auto secondLine = LineSegment(m_secondPoint, m_thirdPoint, 0);
-	auto thirdLine = LineSegment(m_thirdPoint, m_firstPoint, 0);
-	return firstLine.GetPerimeter() + secondLine.GetPerimeter() + thirdLine.GetPerimeter();
+	auto firstLinePerimeter = GetDistance(m_firstPoint, m_secondPoint);
+	auto secondLinePerimeter = GetDistance(m_secondPoint, m_thirdPoint);
+	auto thirdLinePerimeter = GetDistance(m_thirdPoint, m_firstPoint);
+	return firstLinePerimeter + secondLinePerimeter + thirdLinePerimeter;
 }
 
-uint32_t Triangle::GetOutlineColor() const
+void Triangle::Draw(ICanvas& canvas) const
 {
-	return m_outlineColor;
-}
-
-uint32_t Triangle::GetFillColor() const
-{
-	return m_fillColor;
-}
-
-std::string Triangle::ToString() const
-{
-	return "Square: " + toStringWithPrecision(GetArea()) + "\n" +
-		   "Perimeter: " + toStringWithPrecision(GetPerimeter()) + "\n" +
-		   "Stroke color: " + toStringHex(GetOutlineColor()) + "\n" +
-		   "Fill color: " + toStringHex(GetFillColor()) + "\n";
-}
-
-void Triangle::Draw(ICanvas& canvas)
-{
-	canvas.FillPolygon({m_firstPoint, m_secondPoint, m_thirdPoint}, m_fillColor);
+	canvas.FillPolygon({ m_firstPoint, m_secondPoint, m_thirdPoint }, SolidShape::GetFillColor());
 }

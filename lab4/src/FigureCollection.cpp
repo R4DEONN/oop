@@ -6,8 +6,16 @@ void FigureCollection::Insert(const std::shared_ptr<IShape>& shape)
 	m_shapes.push_back(shape);
 }
 
-void FigureCollection::EnumerateShapes(ShapeHandler& cb) const
+void FigureCollection::EnumerateShapes(const ShapeHandler& cb) const
 {
-	cb(m_shapes);
+	for (const auto& shape : m_shapes)
+	{
+		cb(shape);
+	}
+}
+
+size_t FigureCollection::GetLength() const
+{
+	return m_shapes.size();
 }
 
