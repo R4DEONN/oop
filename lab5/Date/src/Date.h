@@ -1,6 +1,7 @@
 #pragma once
 
-#include <ctime>
+#include "iostream"
+#include <iomanip>
 
 // Месяц
 enum class Month
@@ -53,7 +54,7 @@ public:
 	Date operator-(unsigned days) const;
 	Date& operator+=(unsigned days);
 	Date& operator-=(unsigned days);
-	auto operator<=>(const Date& other) const = default;
+	constexpr auto operator<=>(const Date& other) const = default;
 
 private:
 	unsigned m_timestamp = 0;
@@ -67,19 +68,46 @@ private:
 	constexpr static const unsigned MAX_DAY = 2932897;
 	constexpr static const unsigned DAYS_OF_WEEK = 7;
 
-	[[nodiscard]] bool IsLeapYear(unsigned year) const;
-	[[nodiscard]] unsigned GetDaysInMonth(Month month, unsigned year) const;
+	[[nodiscard]] static bool IsLeapYear(unsigned year) ;
+	[[nodiscard]] static unsigned GetDaysInMonth(Month month, unsigned year) ;
 	[[nodiscard]] unsigned DateToTimestamp(unsigned day, Month month, unsigned year) const;
-	void ValidateDatetime(unsigned day, Month month, unsigned year) const;
+	static void ValidateDatetime(unsigned day, Month month, unsigned year) ;
 	void ValidateTimestamp() const;
 };
 
 inline Date operator+(const Date& date, unsigned days)
 {
-	return Date(date.GetTimestamp() + days - 1);
+	return Date(date.GetTimestamp() + days);
 }
 
 inline Date operator+(unsigned days, const Date& date)
 {
-	return Date(date.GetTimestamp() + days - 1);
+	return Date(date.GetTimestamp() + days);
+}
+
+inline std::ostream& operator<<(std::ostream& output, const Date& date)
+{
+	return output
+		<< std::setw(2) << std::setfill('0') << date.GetDay() << '.'
+		<< std::setw(2) << std::setfill('0') << static_cast<unsigned>(date.GetMonth()) << '.'
+		<< date.GetYear();
+}
+
+inline std::istream& operator>>(std::istream& input, Date& date)
+{
+	unsigned year;
+	unsigned month;
+	unsigned day;
+	char dot1;
+	char dot2;
+
+	input >> day >> dot1 >> month >> dot2 >> year;
+
+	if (dot1 != '.' || dot2 != '.')
+	{
+		input.setstate(std::ios::badbit);
+	}
+
+	date = Date(day, static_cast<Month>(month), year);
+	return input;
 }

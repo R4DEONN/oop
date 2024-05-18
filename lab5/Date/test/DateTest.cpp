@@ -16,6 +16,28 @@ TEST_CASE("default constructor")
 	AssertDate(date, 1, Month::JANUARY, 1970, WeekDay::THURSDAY);
 }
 
+TEST_CASE("default constructor1")
+{
+	auto date = Date(18, Month::MAY, 2400);
+	AssertDate(date, 18, Month::MAY, 2400, WeekDay::THURSDAY);
+}
+
+TEST_CASE("default constructor2")
+{
+	auto date = Date(18, Month::MAY, 5747);
+	AssertDate(date, 18, Month::MAY, 5747, WeekDay::THURSDAY);
+}
+TEST_CASE("default constructor3")
+{
+	auto date = Date(19, Month::MAY, 5747);
+	AssertDate(date, 19, Month::MAY, 5747, WeekDay::FRIDAY);
+}
+
+TEST_CASE("default constructor4")
+{
+	REQUIRE(Date(18, Month::MAY, 2024) + 1432846 == Date(19, Month::MAY, 5947));
+}
+
 TEST_CASE("day constructor 2 january 1970")
 {
 	auto date = Date(1);
@@ -80,7 +102,7 @@ TEST_CASE("operations")
 	++date;
 	REQUIRE(date == Date(2));
 	date--;
-	REQUIRE(date.GetTimestamp() == 2);
+	REQUIRE(date.GetTimestamp() == 1);
 	--date;
 	REQUIRE(date == Date());
 
@@ -91,9 +113,26 @@ TEST_CASE("operations")
 	date -= 1;
 	REQUIRE(date == Date());
 	REQUIRE(date != Date(1));
+	REQUIRE(!(date != Date(0)));
 	REQUIRE(date < Date(1));
 	REQUIRE(date <= Date(1));
+	REQUIRE(!(date > Date(1)));
 	REQUIRE(date <= Date(0));
 	REQUIRE(date >= Date(0));
 	REQUIRE(date + 1 > Date(0));
+	REQUIRE(!(date + 1 <= Date(0)));
 }
+
+TEST_CASE("input/output")
+{
+	std::istringstream input("05.01.1970");
+	std::ostringstream output;
+	Date date;
+	input >> date;
+	output << date;
+
+	std::string expectedOutput = "05.01.1970";
+
+	REQUIRE(expectedOutput == output.str());
+}
+

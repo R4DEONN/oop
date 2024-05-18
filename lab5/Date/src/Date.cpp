@@ -1,6 +1,5 @@
 #include "stdexcept"
 #include "Date.h"
-#include "iostream"
 
 Date::Date()
 : m_timestamp(MIN_DAY)
@@ -43,7 +42,7 @@ unsigned Date::GetDay() const
 	return days;
 }
 
-unsigned Date::GetDaysInMonth(Month month, unsigned year) const
+unsigned Date::GetDaysInMonth(Month month, unsigned year)
 {
 	switch (month)
 	{
@@ -60,16 +59,17 @@ unsigned Date::GetDaysInMonth(Month month, unsigned year) const
 }
 
 Month Date::GetMonth() const
-{
-	unsigned year = MIN_YEAR;
-	Month month = Month::JANUARY;
-	unsigned days = m_timestamp;
+{	unsigned year = MIN_YEAR;
 
-	while (days > static_cast<unsigned>(IsLeapYear(year) ? 366 : 365))
-	{
-		days -= IsLeapYear(year) ? 366 : 365;
-		year++;
-	}
+	unsigned shift_years = m_timestamp / 365.25;
+	year += shift_years;
+
+	unsigned days_remaining = m_timestamp;
+	unsigned leap_years = (year - MIN_YEAR) / 4 - (year - MIN_YEAR) / 100 + (year - MIN_YEAR) / 400;
+
+	days_remaining -= shift_years * 365 + leap_years;
+	Month month = Month::JANUARY;
+	unsigned days = days_remaining;
 
 	unsigned daysInMonth = GetDaysInMonth(month, year);
 	while (days > daysInMonth)
@@ -82,7 +82,7 @@ Month Date::GetMonth() const
 	return month;
 }
 
-bool Date::IsLeapYear(unsigned year) const
+bool Date::IsLeapYear(unsigned year)
 {
 	return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
@@ -90,13 +90,23 @@ bool Date::IsLeapYear(unsigned year) const
 unsigned Date::GetYear() const
 {
 	unsigned year = MIN_YEAR;
-	unsigned days = m_timestamp;
 
-	while (days > static_cast<unsigned>(IsLeapYear(year) ? 366 : 365))
-	{
-		days -= IsLeapYear(year) ? 366 : 365;
-		year++;
-	}
+	unsigned shift_years = m_timestamp / 365.25;
+	year += shift_years;
+
+//	unsigned days_remaining = m_timestamp;
+//	unsigned leap_years = (year - MIN_YEAR) / 4 - (year - MIN_YEAR) / 100 + (year - MIN_YEAR) / 400;
+//
+//	days_remaining -= shift_years * 365 + leap_years;
+//
+//	if (days_remaining > 0)
+//	{
+//		while (days_remaining > static_cast<unsigned>(IsLeapYear(year) ? 366 : 365))
+//		{
+//			days_remaining -= IsLeapYear(year) ? 366 : 365;
+//			year++;
+//		}
+//	}
 
 	return year;
 }
@@ -122,7 +132,7 @@ unsigned Date::DateToTimestamp(unsigned int day, Month month, unsigned int year)
 	return days;
 }
 
-void Date::ValidateDatetime(unsigned int day, Month month, unsigned int year) const
+void Date::ValidateDatetime(unsigned int day, Month month, unsigned int year)
 {
 	if (year < MIN_YEAR || year > MAX_YEAR)
 	{
@@ -164,12 +174,12 @@ Date Date::operator--(int)
 
 unsigned Date::GetTimestamp() const
 {
-	return m_timestamp;
+	return m_timestamp - 1;
 }
 
 unsigned Date::operator-(const Date& date) const
 {
-	return (GetTimestamp() - 1) - (date.GetTimestamp() - 1);
+	return (GetTimestamp()) - (date.GetTimestamp());
 }
 
 Date& Date::operator+=(unsigned days)
@@ -189,7 +199,7 @@ void Date::ValidateTimestamp() const
 
 Date Date::operator-(unsigned int days) const
 {
-	return Date(GetTimestamp() - days - 1);
+	return Date(GetTimestamp() - days);
 }
 
 Date& Date::operator-=(unsigned days)
@@ -198,27 +208,3 @@ Date& Date::operator-=(unsigned days)
 	return *this;
 }
 
-std::ostream& operator<<(std::ostream& out, const Date& date)
-{
-	out << date.GetDay() << '.' << static_cast<unsigned>(date.GetMonth()) << '.' << date.GetYear();
-	return out;
-}
-
-std::istream& operator>>(std::istream& in, Date& date)
-{
-	unsigned year;
-	unsigned month;
-	unsigned day;
-	char dot1;
-	char dot2;
-
-	in >> day >> dot1 >> month >> dot2 >> year;
-
-	if (dot1 != '.' || dot2 != '.')
-	{
-		in.setstate(std::ios::badbit);
-	}
-
-	date = Date(day, static_cast<Month>(month), year);
-	return in;
-}
