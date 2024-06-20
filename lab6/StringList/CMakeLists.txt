@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(StringApp)
+project(StringListApp)
 
 enable_testing()
 
@@ -10,10 +10,10 @@ set(EXECUTABLE_OUTPUT_PATH "bin")
 
 add_subdirectory(src)
 
-add_executable(StringApp main.cpp)
+add_executable(StringListApp main.cpp)
 
-target_link_libraries(StringApp PRIVATE mystring)
+target_link_libraries(StringListApp PRIVATE stringlist)
 
 add_subdirectory(test)
 
-add_dependencies(StringApp run_tests)
+add_dependencies(StringListApp run_tests)
